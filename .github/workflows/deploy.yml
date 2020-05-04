@@ -36,4 +36,4 @@ jobs:
         run: cd $GITHUB_WORKSPACE && pwd  && find . && env
 
       - name: run deploy.sh
-        run: cd .github/workflows/ && deploy.sh
+        run: $GITHUB_WORKSPACE/.github/workflows/deploy.sh
