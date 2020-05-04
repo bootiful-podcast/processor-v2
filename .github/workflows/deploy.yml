@@ -8,6 +8,8 @@ env:
   KEYPAIR: bootiful-podcast_processor_05-02-2020
   SECURITY_GROUP: web-host
   INSTANCE_TYPE: t2.large
+  VPC_ID: vpc-0accf75a6ca3a1a45
+  SUBNET_ID: subnet-094fab188362e9346
 #  INSTANCE_TYPE: t1.micro
 
 on:
