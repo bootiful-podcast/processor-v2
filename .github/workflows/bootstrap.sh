@@ -1,9 +1,10 @@
 #!/bin/bash
 
-function install() {
-  EC2_HOME=/home/ec2-user
-  APP_HOME=$EC2_HOME/app
-  LOG=$EC2_HOME/test.log
+EC2_HOME=/home/ec2-user
+APP_HOME=$EC2_HOME/app
+LOG=$EC2_HOME/test.log
+
+do_bootstrap() {
   mkdir -p $APP_HOME
   yum install -y python37 python37-pip git
   mkdir -p $EC2_HOME
@@ -15,7 +16,8 @@ function install() {
   pipenv run python3 main2.py
 }
 
-install >> $LOG
+do_bootstrap   > $LOG 2>&1
+
 
 ### supervisord
 #cd $APP_HOME && pipenv install # && pipenv run python  main2.py
