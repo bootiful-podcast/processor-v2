@@ -9,6 +9,7 @@ app = Flask(__name__)
 def hello():
     return {'message': "Hello World!"}
 
+
 if __name__ == '__main__':
     fp = os.path.join(os.environ['HOME'], 'Desktop', 'hello.txt')
     if not os.path.exists(os.path.dirname(fp)):
