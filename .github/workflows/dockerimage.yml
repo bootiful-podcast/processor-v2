@@ -1,0 +1,42 @@
+# name: Docker Image CI
+
+# on:
+#   push:
+#     branches: [ master ]
+#   pull_request:
+#     branches: [ master ]
+
+# jobs:
+
+#   build:
+
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     - uses: actions/checkout@v2
+#     - name: Build the Docker image
+#       run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+
+# - name: AWS: Deploy to ECR
+#   uses: Terranovax/aws-ecr-deploy@v1
+#   with:
+#     # The AWS account id
+#     account_id: 
+#     # The AWS access key id
+#     access_key_id: 
+#     # The AWS secret access key
+#     secret_access_key: 
+#     # The AWS region of the ECR repo
+#     region: 
+#     # Create the AWS ECR repo if it doesn't exist
+#     create_repo: # optional
+#     # Path to Dockerfile to build an image for deploying to ECR
+#     dockerfile: # optional, default is ./Dockerfile
+#     # Additional build arguments to pass into Docker build
+#     docker_build_args: # optional
+#     # Path to Dockerfile, defaults to working directory
+#     path: # optional, default is .
+#     # Name of your ECR repository. Defaults to the Github repo name in the lowercase format: {owner}/{repo_name}
+#     repo: # optional
+#     # Comma-separated string of ECR image tags to apply
+#     tags: # optional, default is latest
