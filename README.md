@@ -13,6 +13,6 @@ All of those values will be put in to the $HOME/.aws directory in the respective
 
 The python process itself lives in `main.py`. When it starts up it will need some configuration that tells it where to find the RabbitMQ queues and exchanges with which it should work. 
 
-
+In order to get this to work I had to create a VPC. The VPC in turn required a subnet. I 
 
  
