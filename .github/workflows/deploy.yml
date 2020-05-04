@@ -25,8 +25,8 @@ jobs:
 #      - name: configure AWS
 #        run: python3 --version &&  python3 config_aws.py $HOME/.aws
 
-      - name: inspect the aws dir
-        run: ls -la $HOME/.aws
+#      - name: inspect the aws dir
+#        run: ls -la $HOME/.aws
 
       - name: test the AWS CLI
         run: aws --version
