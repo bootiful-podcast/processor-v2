@@ -20,7 +20,7 @@ do_bootstrap() {
 do_bootstrap >$LOG 2>&1
 
 ### supervisord
-#cd $APP_HOME && pipenv install # && pipenv run python  main2.py
+#cd $APP_HOME && pipenv install # && pipenv run python main2.py
 #echo "starting supervisor -y -qq..."
 #sudo service start supervisor -y -qq
 #CONF_FN=/etc/supervisor/conf.d/${SVC_NAME}.conf

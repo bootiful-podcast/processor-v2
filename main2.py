@@ -11,7 +11,7 @@ def hello():
 
 
 if __name__ == "__main__":
-    app.run()
+    # app.run()
 
     print('hello, world!')
     home = os.environ['HOME']
