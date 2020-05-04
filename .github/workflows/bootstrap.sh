@@ -1,6 +1,8 @@
 #!/bin/bash
 
 EC2_HOME=/home/ec2-user
+APP_HOME=$EC2_HOME/app
+mkdir -p $APP_HOME
 yum install -y python37 python37-pip git 
 
 mkdir -p $EC2_HOME
@@ -11,6 +13,5 @@ echo "$HOME $(whoami) " > $EC2_HOME/second.txt
 pip3 install pipenv 
 pipenv > $EC2_HOME/pipenv-status.txt
 
-git clone https://github.com/bootiful-podcast/python-test-to-deploy.git $EC2_HOME/app
-cd $EC2_HOME/app
-pipenv install && pipenv run python3 main.py
+git clone https://github.com/bootiful-podcast/python-test-to-deploy.git $APP_HOME
+cd $APP_HOME && pipenv install && pipenv run python3 main.py
