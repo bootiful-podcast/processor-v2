@@ -1,10 +1,13 @@
 name: Deploy the application to production
 
 env:
-  #  AWS_REGION: ${{ secrets.AWS_REGION }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AMI_ID: ami-06fcc1f0bc2c8943f
+  KEYPAIR: bootiful-podcast_processor_05-02-2020
+  SECURITY_GROUP: web-host
+  INSTANCE_TYPE: t1.micro
 
 on:
   push:
@@ -26,8 +29,8 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-#      - name: inspect the aws dir
-#        run: ls -la $HOME/.aws
-
       - name: test the AWS CLI
         run: aws --version && aws ec2 describe-instances
+
+      - name: run an instance
+        run: aws ec2 run-instances --image-id $AMI_ID --region $AWS_REGION --count 1 --instance-type $INSTANCE_TYPE --key-name $KEYPAIR --security-groups $SECURITY_GROUP
