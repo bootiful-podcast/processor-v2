@@ -13,11 +13,10 @@ do_bootstrap() {
   pip3 install pipenv supervisor
   git clone https://github.com/bootiful-podcast/python-test-to-deploy.git $APP_HOME
   cd $APP_HOME
-  pipenv run python3 main2.py
+  HOME=/home/ec2-user/ pipenv run python3 main2.py
 }
 
-do_bootstrap   > $LOG 2>&1
-
+do_bootstrap >$LOG 2>&1
 
 ### supervisord
 #cd $APP_HOME && pipenv install # && pipenv run python  main2.py
