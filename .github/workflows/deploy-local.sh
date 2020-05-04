@@ -1,7 +1,6 @@
 #!/bin/sh
 KEYPAIR=udemy-aws-oregon
-#SECURITY_GROUP=web-host
-SECURITY_GROUP=launch-wizard-1
+SECURITY_GROUP=bootiful-podcast-sg-default
 AMI_ID=ami-0d6621c01e8c2de2c
 AWS_REGION=us-west-2
 INSTANCE_TYPE=t3.large
