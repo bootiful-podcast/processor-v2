@@ -7,7 +7,8 @@ env:
   AMI_ID: ami-06fcc1f0bc2c8943f
   KEYPAIR: bootiful-podcast_processor_05-02-2020
   SECURITY_GROUP: web-host
-  INSTANCE_TYPE: t1.micro
+  INSTANCE_TYPE: t2.large
+#  INSTANCE_TYPE: t1.micro
 
 on:
   push:
