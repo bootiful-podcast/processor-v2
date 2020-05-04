@@ -15,7 +15,7 @@ jobs:
    steps:
    - uses: actions/checkout@v2
    - name: configure AWS
-     run: python3 --version &&  python3 config_aws.py /home/ec2-user/.aws
+     run: python3 --version &&  python3 config_aws.py $HOME/.aws
 
 # - name: AWS: Deploy to ECR
 #   uses: Terranovax/aws-ecr-deploy@v1
