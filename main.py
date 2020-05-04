@@ -12,8 +12,9 @@ def hello():
 
 if __name__ == '__main__':
     fp = os.path.join(os.environ['HOME'], 'Desktop', 'hello.txt')
-    if not os.path.exists(os.path.dirname(fp)):
-        os.makedirs(fp)
+    dir_for_fp = os.path.dirname(fp)
+    if not os.path.exists(dir_for_fp):
+        os.makedirs(dir_for_fp)
     with open(fp, 'w') as f:
         f.write('Nihao!')
 
