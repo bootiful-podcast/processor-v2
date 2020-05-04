@@ -29,7 +29,7 @@ jobs:
         run: ls -la $HOME/.aws
 
       - name: test the AWS CLI
-        run: aws --version && aws ec2 describe-instances
+        run: aws --version  aws ec2 describe-instances
 
 
 # - name: AWS: Deploy to ECR
