@@ -26,8 +26,8 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: inspect the aws dir
-        run: ls -la $HOME/.aws
+#      - name: inspect the aws dir
+#        run: ls -la $HOME/.aws
 
       - name: test the AWS CLI
         run: aws --version && aws ec2 describe-instances
