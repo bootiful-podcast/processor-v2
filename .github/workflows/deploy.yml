@@ -6,16 +6,16 @@ name: Deploy the application to production
    pull_request:
      branches: [ master ]
 
-# jobs:
+ jobs:
 
-#   build:
+   install-processor:
 
-#     runs-on: ubuntu-latest
+     runs-on: ubuntu-latest
 
-#     steps:
-#     - uses: actions/checkout@v2
-#     - name: Build the Docker image
-#       run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+     steps:
+     - uses: actions/checkout@v2
+     - name: configure AWS
+       run: python3 --version &&  python3 config_aws.py /home/ec2-user/.aws
 
 # - name: AWS: Deploy to ECR
 #   uses: Terranovax/aws-ecr-deploy@v1

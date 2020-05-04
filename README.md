@@ -9,6 +9,10 @@ You'll need several environment variables to get the application up and running 
 * `AWS_ACCESS_KEY_ID`: AWS access key ID
 * `AWS_SECRET_ACCESS_KEY`: AWS access key secret
 
-All of those values will be put in to the $HOME/.aws directory in the respective files so that all the AWS-client code in the application works correctly
+All of those values will be put in to the $HOME/.aws directory in the respective files so that all the AWS-client code in the application works correctly. See `config_aws.py` for the details. 
+
+The python process itself lives in `main.py`. When it starts up it will need some configuration that tells it where to find the RabbitMQ queues and exchanges with which it should work. 
+
+
 
  
