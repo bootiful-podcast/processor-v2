@@ -18,4 +18,4 @@ if __name__ == '__main__':
     with open(fp, 'w') as f:
         f.write('Nihao!')
 
-    app.run(port=8080)
+    app.run(host='0.0.0.0', port=8080)
