@@ -32,9 +32,8 @@ jobs:
       - name: test the AWS CLI
         run: aws --version && aws ec2 describe-instances
 
-      - name: look at the filesystem
-        run: cd $GITHUB_WORKSPACE && find . && env
-
+      - name: inspect
+        run: cd $GITHUB_WORKSPACE && pwd  && find . && env
 
       - name: run deploy.sh
         run: cd .github/workflows/ && deploy.sh
