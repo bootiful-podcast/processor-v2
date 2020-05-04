@@ -14,4 +14,4 @@ pip3 install pipenv
 pipenv > $EC2_HOME/pipenv-status.txt
 
 git clone https://github.com/bootiful-podcast/python-test-to-deploy.git $APP_HOME
-cd $APP_HOME && pipenv install && pipenv run python3 main2.py
+cd $APP_HOME && pipenv install && pipenv run python  main2.py
