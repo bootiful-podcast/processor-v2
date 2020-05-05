@@ -70,7 +70,7 @@ fi
 
 ## Go time
 IMAGE_NAME=$(aws ec2 describe-images --region $AWS_REGION --owners amazon --filters 'Name=name,Values=amzn-ami-hvm-????.??.?.x86_64-gp2' 'Name=state,Values=available' | jq -r '.Images | sort_by(.CreationDate) | last(.[]).ImageId')
-echo "going to launch $IMAGE_NAME "
+IMAGE_NAME=$AMI_ID #todo can we fix this later?
 
 INSTANCE_ID=$(aws ec2 run-instances --region $AWS_REGION --image-id $IMAGE_NAME --count 1 --instance-type $INSTANCE_TYPE --key-name $KEYPAIR_NAME --security-group-ids $SG_ID --subnet-id $SUBNET_ID --associate-public-ip-address | jq -r  '.Instances[0].InstanceId')
 echo "INSTANCE_ID=$INSTANCE_ID"
