@@ -5,18 +5,9 @@ INSTANCE_TYPE=t3.large
 SUBNET_ID=subnet-05ec18a303fb18a5c
 SECURITY_GROUP_NAME=bootiful-podcast-sg
 USER_DATA_URL=https://raw.githubusercontent.com/bootiful-podcast/python-test-to-deploy/master/.github/workflows/bootstrap.sh
-KEYPAIR_NAME=bootiful-podcast-${RANDOM}
+USER_DATA=$(curl $USER_DATA_URL)
+KEYPAIR_NAME=bootiful-podcast #-${RANDOM}
 KEYPAIR_FILE=$HOME/Desktop/${KEYPAIR_NAME}.pem
-
-## Requirements:
-### - subnet
-### - keypair
-### - vpc
-# https://howtodoinjava.com/aws/create-connect-aws-ec2-ssh-puttygen/
-# https://treyperry.com/2015/06/22/ipv4-cidr-vpc-in-a-nutshell/
-# https://sysadmins.co.za/aws-create-a-vpc-and-launch-ec2-instance-using-the-cli/
-# https://chartio.com/resources/tutorials/connecting-to-a-database-within-an-amazon-vpc/
-# https://ryanstutorials.net/bash-scripting-tutorial/bash-if-statements.php
 
 ### VPC
 if [ "$(aws ec2 describe-vpcs --region $AWS_REGION | jq -r ' .Vpcs | length ' | grep 0)" = "0" ]; then
@@ -64,42 +55,22 @@ echo "SG_ID=$SG_ID"
 
 ### Keypair
 if [ "$(aws ec2 describe-key-pairs --region $AWS_REGION | jq -r '.KeyPairs[].KeyName ' | grep $KEYPAIR_NAME)" = "" ]; then
-  aws ec2 create-key-pair --region $AWS_REGION --key-name $KEYPAIR_NAME --query 'KeyMaterial' --output text >$KEYPAIR_FILE
+  ls -la $KEYPAIR_FILE && rm -rf $KEYPAIR_FILE
+  aws ec2 create-key-pair --region $AWS_REGION --key-name $KEYPAIR_NAME --query 'KeyMaterial' --output text > $KEYPAIR_FILE
   chmod 400 $KEYPAIR_FILE
 fi
 
-## Go time
+## Run the instance on EC2
 IMAGE_NAME=$(aws ec2 describe-images --region $AWS_REGION --owners amazon --filters 'Name=name,Values=amzn-ami-hvm-????.??.?.x86_64-gp2' 'Name=state,Values=available' | jq -r '.Images | sort_by(.CreationDate) | last(.[]).ImageId')
 IMAGE_NAME=$AMI_ID #todo can we fix this later?
-
-INSTANCE_ID=$(aws ec2 run-instances --region $AWS_REGION --image-id $IMAGE_NAME --count 1 --instance-type $INSTANCE_TYPE --key-name $KEYPAIR_NAME --security-group-ids $SG_ID --subnet-id $SUBNET_ID --associate-public-ip-address | jq -r  '.Instances[0].InstanceId')
+INSTANCE_ID=$(aws ec2 run-instances --user-data "$USER_DATA" --region $AWS_REGION --image-id $IMAGE_NAME --count 1 --instance-type $INSTANCE_TYPE --key-name $KEYPAIR_NAME --security-group-ids $SG_ID --subnet-id $SUBNET_ID --associate-public-ip-address | jq -r '.Instances[0].InstanceId')
 echo "INSTANCE_ID=$INSTANCE_ID"
-DNS_NAME=$(aws ec2 describe-instances --region $AWS_REGION --instance-ids $INSTANCE_ID --query 'Reservations[0].Instances[0].PublicDnsName')
+DNS_NAME=$(aws ec2 describe-instances --region $AWS_REGION --instance-ids $INSTANCE_ID | jq -r  '.Reservations[0].Instances[0].PublicDnsName')
 echo "DNS_NAME=$DNS_NAME"
 
-#ssh -i ~/.ssh/myKey.pem ec2-user@ec2-34-12-34-56.eu-west-1.compute.amazonaws.com
-#
-#```language-bash
-#$ aws ec2 run-instances --image-id ami-f9dd458a --count 1 --instance-type t2.micro --key-name myKey --security-group-ids <returned-security-groupid> --subnet-id <returned-subnetid> --associate-public-ip-address --query 'Instances[0].InstanceId'
-#"i-1234528abce88b44"
-#``` <p>
-#
-#Get the Public IP by calling the Describe-Instances API call:
-#
-#```language-bash
-#$ aws ec2 describe-instances --instance-ids <returned-instance-id --query 'Reservations[0].Instances[0].PublicDnsName'
-#"ec2-34-12-34-56.eu-west-1.compute.amazonaws.com"
-#``` <p>
-#
-#SSH into your EC2 Instance with your KeyPair and Public IP:
-#
-#```language-bash
-#$ ssh -i ~/.ssh/myKey.pem ec2-user@ec2-34-12-34-56.eu-west-1.compute.amazonaws.com
-#[ec2-user@ip-192-168-103-84 ~]$
-#``` <p>
-#
-#Aditionally, you can also tag your resource, by doing the following:
-#
-#```language-bash
-#$ aws ec2 create-tags --resources "i-1234528abce88b44" --tags 'Key="ENV",Value=DEV'
-#``` <p>
+echo "waiting 30s..."
+sleep 30
+ssh -i $KEYPAIR_FILE ec2-user@${DNS_NAME}
+
+# ssh -i ~/.ssh/myKey.pem ec2-user@ec2-34-12-34-56.eu-west-1.compute.amazonaws.com
+# aws ec2 create-tags --resources "i-1234528abce88b44" --tags 'Key="ENV",Value=DEV'
