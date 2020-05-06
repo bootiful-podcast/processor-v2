@@ -69,8 +69,6 @@ IMAGE_NAME=$AMI_ID #todo can we fix this later? it'd be nice to query for the im
 INSTANCE_ID=$(aws ec2 run-instances --user-data "$USER_DATA" --region $AWS_REGION --image-id $IMAGE_NAME --count 1 --instance-type $INSTANCE_TYPE --key-name $KEYPAIR_NAME --security-group-ids $SG_ID --subnet-id $SUBNET_ID --associate-public-ip-address | jq -r '.Instances[0].InstanceId')
 echo "INSTANCE_ID=$INSTANCE_ID"
 
-aws ec2 create-tags --resources $INSTANCE_ID --tags Key=github_repository,Value="$GITHUB_REPOSITORY"
-aws ec2 create-tags --resources $INSTANCE_ID --tags Key=github_sha,Value="$GITHUB_SHA"
 
 DNS_NAME=""
 
@@ -85,6 +83,9 @@ while [ "${DNS_NAME}" = "" ]; do
 done
 
 echo "DNS_NAME=$DNS_NAME"
+
+aws ec2 create-tags --resources $INSTANCE_ID --tags Key=github_repository,Value="$GITHUB_REPOSITORY"
+aws ec2 create-tags --resources $INSTANCE_ID --tags Key=github_sha,Value="$GITHUB_SHA"
 
 #ssh -i $KEYPAIR_FILE ec2-user@${DNS_NAME}
 
