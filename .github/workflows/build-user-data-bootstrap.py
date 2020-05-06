@@ -11,4 +11,4 @@ if __name__ == '__main__':
     contents = str(urllib.request.urlopen(url_for_bootstrap_sh).read())
     a, b = contents.split(fragment)
     lines = [a, rmq_address, b]
-    print(os.linesep.join(lines))
+    print(''.join(lines))
