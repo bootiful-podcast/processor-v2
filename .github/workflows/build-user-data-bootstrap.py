@@ -8,7 +8,7 @@ if __name__ == '__main__':
     rmq_address = sys.argv[2]
     fragment = '_PODCAST_RMQ_ADDRESS_'
     with urllib.request.urlopen(url_for_bootstrap_sh) as response:
-        contents: str = response.read()
+        contents = response.read()
         a, b = contents.split(fragment)
         lines = [a, rmq_address, b]
         print(os.linesep.join(lines))
