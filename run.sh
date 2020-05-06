@@ -4,6 +4,7 @@ do_run() {
   echo $HOME
   whoami
   pwd
+
   start_dir=$(cd "$(dirname $0)" && pwd)
   cd $start_dir
   echo "$start_dir"
