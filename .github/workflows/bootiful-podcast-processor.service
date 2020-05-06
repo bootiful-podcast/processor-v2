@@ -1,7 +1,7 @@
 [Unit]
 Description=bootiful-podcast-processor
 After=network.target
-StartLimitIntervalSec=60
+StartLimitIntervalSec=120
 
 [Service]
 Type=simple
