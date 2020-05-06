@@ -19,14 +19,19 @@ PODCAST_RMQ_ADDRESS=_PODCAST_RMQ_ADDRESS_
 do_bootstrap() {
   mkdir -p $APP_HOME
   mkdir -p $EC2_HOME
+
   yum install -y python37 python37-pip git
+
   git clone https://github.com/bootiful-podcast/python-test-to-deploy.git $APP_HOME
   cd $APP_HOME
   chown -R ec2-user:ec2-user $APP_HOME
-  mkdir -p "$(dirname $ENV_FILE)"
+
+
   touch $ENV_FILE
   echo "PODCAST_RMQ_ADDRESS=$PODCAST_RMQ_ADDRESS" >> $ENV_FILE
+
   cp $APP_HOME/.github/workflows/${SYSTEMD_SVC_NAME}.service /etc/systemd/system/${SYSTEMD_SVC_NAME}.service
+
   systemctl start $SYSTEMD_SVC_NAME
   systemctl enable $SYSTEMD_SVC_NAME
 }
