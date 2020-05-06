@@ -7,4 +7,5 @@ s = (
 """.strip()
     % sys.argv[1].strip()
 )
+
 print(s)
