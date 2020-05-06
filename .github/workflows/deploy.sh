@@ -66,7 +66,7 @@ fi
 ## Run the instance on EC2
 #IMAGE_NAME=$(aws ec2 describe-images --region $AWS_REGION --owners amazon --filters 'Name=name,Values=amzn-ami-hvm-????.??.?.x86_64-gp2' 'Name=state,Values=available' | jq -r '.Images | sort_by(.CreationDate) | last(.[]).ImageId')
 IMAGE_NAME=$AMI_ID #todo can we fix this later? it'd be nice to query for the image and get the latest and greatest, i guess.
-INSTANCE_ID=$(aws ec2 run-instances --user-data "$USER_DATA" --region $AWS_REGION --image-id $IMAGE_NAME --count 1 --instance-type $INSTANCE_TYPE --key-name $KEYPAIR_NAME --security-group-ids $SG_ID --subnet-id $SUBNET_ID --associate-public-ip-address | jq -r '.Instances[0].InstanceId' --tag-specifications "$(python3 build-github-resource-tags.py $GITHUB_REPOSITORY $GITHUB_SHA)")
+INSTANCE_ID=$(aws ec2 run-instances --user-data "$USER_DATA" --region $AWS_REGION --image-id $IMAGE_NAME --count 1 --instance-type $INSTANCE_TYPE --key-name $KEYPAIR_NAME --security-group-ids $SG_ID --subnet-id $SUBNET_ID  --tag-specifications "$(python3 build-github-resource-tags.py $GITHUB_REPOSITORY $GITHUB_SHA)" --associate-public-ip-address | jq -r '.Instances[0].InstanceId')
 echo "INSTANCE_ID=$INSTANCE_ID"
 
 #aws ec2 create-tags --resources $INSTANCE_ID --tags Key=github_repository,Value="$GITHUB_REPOSITORY"
