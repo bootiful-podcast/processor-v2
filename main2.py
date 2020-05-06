@@ -7,14 +7,15 @@ app = Flask(__name__)
 
 @app.route("/")
 def greet():
-    return {'greeting': 'Hello World!'}
+    return {"greeting": "Hello World!"}
+
 
 if __name__ == "__main__":
-    print('hello, world!')
-    home = os.environ['HOME']
-    print('home is ' + home)
-    path = os.path.join(home, 'hello.txt')
-    with open(path, 'w') as fp:
-        fp.write('hello, world!')
+    print("hello, world!")
+    home = os.environ["HOME"]
+    print("home is " + home)
+    path = os.path.join(home, "hello.txt")
+    with open(path, "w") as fp:
+        fp.write("hello, world!")
 
-    app.run(host='0.0.0.0', port=8080)
+    app.run(host="0.0.0.0", port=8080)
