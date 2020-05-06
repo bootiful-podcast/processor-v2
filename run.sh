@@ -2,7 +2,7 @@
 
 whoami > "$HOME"/run.log
 
-pip install --user --upgrade pipenv
+pip3 install --user --upgrade pipenv
 start_dir=$(cd . && pwd)
 cd $start_dir
-pipenv install && pipenv run python main2.py
+pipenv install && pipenv run python3 main2.py

@@ -9,6 +9,8 @@ USER_DATA=$(curl $USER_DATA_URL) # todo: we need some sort of program to in turn
 KEYPAIR_NAME=bootiful-podcast #-${RANDOM}
 KEYPAIR_FILE=$HOME/Desktop/${KEYPAIR_NAME}.pem
 
+## TODO: go through and terminate all running apps on script start.
+
 ### VPC
 if [ "$(aws ec2 describe-vpcs --region $AWS_REGION | jq -r ' .Vpcs | length ' | grep 0)" = "0" ]; then
   VPC_ID=$(aws ec2 create-vpc --cidr-block 192.168.0.0/16 --region $AWS_REGION | jq -r '.Vpc.VpcId')
