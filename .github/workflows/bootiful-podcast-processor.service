@@ -1,5 +1,5 @@
 [Unit]
-Description=Bootiful Podcast Processor
+Description=bootiful-podcast-processor
 After=network.target
 StartLimitIntervalSec=60
 
