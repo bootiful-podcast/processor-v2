@@ -5,7 +5,7 @@ INSTANCE_TYPE=t3.large
 SUBNET_ID=subnet-05ec18a303fb18a5c
 SECURITY_GROUP_NAME=bootiful-podcast-sg
 USER_DATA_URL=https://raw.githubusercontent.com/bootiful-podcast/python-test-to-deploy/master/.github/workflows/bootstrap.sh
-USER_DATA=$(curl $USER_DATA_URL)
+USER_DATA=$(curl $USER_DATA_URL) # todo: we need some sort of program to in turn encode the current github version into the built-and-baked app
 KEYPAIR_NAME=bootiful-podcast #-${RANDOM}
 KEYPAIR_FILE=$HOME/Desktop/${KEYPAIR_NAME}.pem
 
@@ -68,9 +68,9 @@ echo "INSTANCE_ID=$INSTANCE_ID"
 DNS_NAME=$(aws ec2 describe-instances --region $AWS_REGION --instance-ids $INSTANCE_ID | jq -r  '.Reservations[0].Instances[0].PublicDnsName')
 echo "DNS_NAME=$DNS_NAME"
 
-echo "waiting 30s..."
-sleep 30
+echo "waiting 60s..."
+sleep 60
 ssh -i $KEYPAIR_FILE ec2-user@${DNS_NAME}
 
 # ssh -i ~/.ssh/myKey.pem ec2-user@ec2-34-12-34-56.eu-west-1.compute.amazonaws.com
-# aws ec2 create-tags --resources "i-1234528abce88b44" --tags 'Key="ENV",Value=DEV'
+#aws ec2 create-tags --resources  $INSTANCE_ID --tags 'Key="github-version",Value=${}'
