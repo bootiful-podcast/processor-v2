@@ -1,12 +1,15 @@
 [Unit]
 Description=Bootiful Podcast Processor
 After=network.target
-StartLimitIntervalSec=0
+StartLimitIntervalSec=60
 
 [Service]
 Type=simple
 Restart=always
 RestartSec=1
+#Restart=on-failure
+
+
 User=ec2-user
 ExecStart=/usr/bin/env /home/ec2-user/app/run.sh
 
