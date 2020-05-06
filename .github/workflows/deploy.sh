@@ -86,5 +86,5 @@ done
 
 echo "DNS_NAME=$DNS_NAME"
 
-ssh -i $KEYPAIR_FILE ec2-user@${DNS_NAME}
+#ssh -i $KEYPAIR_FILE ec2-user@${DNS_NAME}
 
