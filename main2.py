@@ -11,10 +11,11 @@ def hello():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8080)
-
     print('hello, world!')
     home = os.environ['HOME']
+    print('home is ' + home)
     path = os.path.join(home, 'hello.txt')
     with open(path, 'w') as fp:
         fp.write('hello, world!')
+
+    app.run(host='0.0.0.0', port=8080)
