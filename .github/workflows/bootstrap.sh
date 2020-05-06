@@ -24,7 +24,7 @@ do_bootstrap() {
   SYSTEMD_SVC_NAME=bootiful-podcast-processor
   ENV_FILE=/home/ec2-user/app/environment
   mkdir -p "$(dirname $ENV_FILE)"
-  echo "PODCAST_RMQ_ADDRESS=$PODCAST_RMQ_ADDRESS" >> $ENV_FILE
+  echo "PODCAST_RMQ_ADDRESS=$PODCAST_RMQ_ADDRESS" > $ENV_FILE
   echo "" >> $ENV_FILE
 
   cp $APP_HOME/.github/workflows/${SYSTEMD_SVC_NAME}.service /etc/systemd/system/${SYSTEMD_SVC_NAME}.service
