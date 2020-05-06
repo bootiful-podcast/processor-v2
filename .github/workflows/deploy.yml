@@ -4,6 +4,8 @@ env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  PODCAST_RMQ_ADDRESS: ${{ secrets.PODCAST_RMQ_ADDRESS }}
+
 #  AMI_ID: ami-06fcc1f0bc2c8943f
 #  KEYPAIR: bootiful-podcast_processor_05-02-2020
 #  SECURITY_GROUP: web-host

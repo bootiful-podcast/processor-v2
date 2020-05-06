@@ -14,8 +14,11 @@ if __name__ == "__main__":
     print("hello, world!")
     home = os.environ["HOME"]
     print("home is " + home)
-    path = os.path.join(home, "hello.txt")
+    path = os.path.join(home, "proof")
     with open(path, "w") as fp:
-        fp.write("hello, world!")
+        env = []
+        for k, v in os.environ:
+            env.append('%s=%s' % (k, v))
+        fp.write(os.linesep.join(env))
 
     app.run(host="0.0.0.0", port=8080)

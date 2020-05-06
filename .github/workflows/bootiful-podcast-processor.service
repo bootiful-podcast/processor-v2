@@ -4,11 +4,12 @@ After=network.target
 StartLimitIntervalSec=120
 
 [Service]
+EnvironmentFile=/home/ec2-user/app/environment
 Type=simple
 Restart=always
 RestartSec=120
 #Restart=on-failure
-
+#https://coreos.com/os/docs/latest/using-environment-variables-in-systemd-units.html
 
 User=ec2-user
 ExecStart=/usr/bin/env /home/ec2-user/app/run.sh
