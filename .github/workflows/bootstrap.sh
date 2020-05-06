@@ -3,6 +3,8 @@
 EC2_HOME=/home/ec2-user
 APP_HOME=$EC2_HOME/app
 LOG=$EC2_HOME/ec2-user-data-bootstrap.log
+ENV_FILE=$APP_HOME/environment
+SYSTEMD_SVC_NAME=bootiful-podcast-processor
 
 ### REPLACE ME
 
@@ -21,10 +23,9 @@ do_bootstrap() {
   git clone https://github.com/bootiful-podcast/python-test-to-deploy.git $APP_HOME
   cd $APP_HOME
   chown -R ec2-user:ec2-user $APP_HOME
-  SYSTEMD_SVC_NAME=bootiful-podcast-processor
-  ENV_FILE=/home/ec2-user/app/environment
   mkdir -p "$(dirname $ENV_FILE)"
-  echo "PODCAST_RMQ_ADDRESS=$PODCAST_RMQ_ADDRESS" > $ENV_FILE
+  touch $ENV_FILE
+  echo "PODCAST_RMQ_ADDRESS=$PODCAST_RMQ_ADDRESS" >> $ENV_FILE
   cp $APP_HOME/.github/workflows/${SYSTEMD_SVC_NAME}.service /etc/systemd/system/${SYSTEMD_SVC_NAME}.service
   systemctl start $SYSTEMD_SVC_NAME
   systemctl enable $SYSTEMD_SVC_NAME
