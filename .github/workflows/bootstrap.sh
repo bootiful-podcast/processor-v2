@@ -22,8 +22,13 @@ do_bootstrap() {
   cd $APP_HOME
   chown -R ec2-user:ec2-user $APP_HOME
   SYSTEMD_SVC_NAME=bootiful-podcast-processor
+  ENV_FILE=/home/ec2-user/app/environment
+  mkdir -p "$(dirname $ENV_FILE)"
+  echo "PODCAST_RMQ_ADDRESS=$PODCAST_RMQ_ADDRESS" >> $ENV_FILE
+  echo "" >> $ENV_FILE
+
   cp $APP_HOME/.github/workflows/${SYSTEMD_SVC_NAME}.service /etc/systemd/system/${SYSTEMD_SVC_NAME}.service
-  echo $PODCAST_RMQ_ADDRESS > $APP_HOME/environment
+  echo $PODCAST_RMQ_ADDRESS >$APP_HOME/environment
   systemctl start $SYSTEMD_SVC_NAME
   systemctl enable $SYSTEMD_SVC_NAME
 }
