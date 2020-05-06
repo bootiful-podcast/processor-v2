@@ -5,6 +5,8 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   PODCAST_RMQ_ADDRESS: ${{ secrets.PODCAST_RMQ_ADDRESS }}
+  CONFIG_FILE_NAME: config-development.json
+  ## todo change that to the production value!
 
 #  AMI_ID: ami-06fcc1f0bc2c8943f
 #  KEYPAIR: bootiful-podcast_processor_05-02-2020

@@ -29,6 +29,7 @@ do_bootstrap() {
 
   touch $ENV_FILE
   echo "PODCAST_RMQ_ADDRESS=$PODCAST_RMQ_ADDRESS" >> $ENV_FILE
+  echo "CONFIG_FILE_NAME=$CONFIG_FILE_NAME" >> $ENV_FILE
 
   cp $APP_HOME/.github/workflows/${SYSTEMD_SVC_NAME}.service /etc/systemd/system/${SYSTEMD_SVC_NAME}.service
 

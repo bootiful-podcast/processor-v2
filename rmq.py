@@ -40,6 +40,7 @@ def start_rabbitmq_processor(
 
     with pika.BlockingConnection(params) as connection:
         with connection.channel() as channel:
+            utils.log("connected.")
             for method_frame, properties, body in channel.consume(requests_q):
                 utils.log("processing new request:")
                 utils.log(body)
