@@ -6,8 +6,8 @@ SUBNET_ID=subnet-05ec18a303fb18a5c
 SECURITY_GROUP_NAME=bootiful-podcast-sg
 USER_DATA_URL=https://raw.githubusercontent.com/bootiful-podcast/python-test-to-deploy/master/.github/workflows/bootstrap.sh
 USER_DATA=$(curl $USER_DATA_URL) # todo: we need some sort of program to in turn encode the current github version into the built-and-baked app
-KEYPAIR_NAME=bootiful-podcast #-${RANDOM}
-KEYPAIR_FILE=$HOME/Desktop/${KEYPAIR_NAME}.pem
+KEYPAIR_NAME=bootiful-podcast
+KEYPAIR_FILE=$HOME/${KEYPAIR_NAME}.pem
 
 ## TODO: go through and terminate all running apps on script start.
 
@@ -52,13 +52,14 @@ if [ "$(aws ec2 describe-security-groups --region $AWS_REGION | jq -r '.Security
   aws ec2 authorize-security-group-ingress --group-id $SG_ID --protocol tcp --port 8080 --cidr 0.0.0.0/0 --region $AWS_REGION
 fi
 
-SG_ID=$(aws ec2 describe-security-groups --region $AWS_REGION | jq -r ' .[] | map(select (.GroupName == "bootiful-podcast-sg") ) | .[0].GroupId ')
+SG_ID=$(aws ec2 describe-security-groups --region $AWS_REGION | jq -r "$(python3 build-jq-query.py $SECURITY_GROUP_NAME)")
+#SG_ID=$(aws ec2 describe-security-groups --region $AWS_REGION | jq -r ' .[] | map(select (.GroupName == "bootiful-podcast-sg") ) | .[0].GroupId ')
 echo "SG_ID=$SG_ID"
 
 ### Keypair
 if [ "$(aws ec2 describe-key-pairs --region $AWS_REGION | jq -r '.KeyPairs[].KeyName ' | grep $KEYPAIR_NAME)" = "" ]; then
   ls -la $KEYPAIR_FILE && rm -rf $KEYPAIR_FILE
-  aws ec2 create-key-pair --region $AWS_REGION --key-name $KEYPAIR_NAME --query 'KeyMaterial' --output text > $KEYPAIR_FILE
+  aws ec2 create-key-pair --region $AWS_REGION --key-name $KEYPAIR_NAME --query 'KeyMaterial' --output text >$KEYPAIR_FILE
   chmod 400 $KEYPAIR_FILE
 fi
 
@@ -67,12 +68,22 @@ fi
 IMAGE_NAME=$AMI_ID #todo can we fix this later? it'd be nice to query for the image and get the latest and greatest, i guess.
 INSTANCE_ID=$(aws ec2 run-instances --user-data "$USER_DATA" --region $AWS_REGION --image-id $IMAGE_NAME --count 1 --instance-type $INSTANCE_TYPE --key-name $KEYPAIR_NAME --security-group-ids $SG_ID --subnet-id $SUBNET_ID --associate-public-ip-address | jq -r '.Instances[0].InstanceId')
 echo "INSTANCE_ID=$INSTANCE_ID"
-DNS_NAME=$(aws ec2 describe-instances --region $AWS_REGION --instance-ids $INSTANCE_ID | jq -r  '.Reservations[0].Instances[0].PublicDnsName')
+
+aws ec2 create-tags --resources $INSTANCE_ID --tags Key=github_repository,Value="$GITHUB_REPOSITORY"
+aws ec2 create-tags --resources $INSTANCE_ID --tags Key=github_sha,Value="$GITHUB_SHA"
+
+DNS_NAME=""
+
+resolve_dns() {
+  aws ec2 describe-instances --region $AWS_REGION --instance-ids $INSTANCE_ID | jq -r '.Reservations[0].Instances[0].PublicDnsName'
+}
+
+DNS_NAME="$(resolve_dns)"
+while [ "${DNS_NAME}" = "" ]; do
+  sleep 1
+  DNS_NAME="$(resolve_dns)"
+done
+
 echo "DNS_NAME=$DNS_NAME"
 
-#echo "waiting 60s..."
-#sleep 60
-#ssh -i $KEYPAIR_FILE ec2-user@${DNS_NAME}
-
-# ssh -i ~/.ssh/myKey.pem ec2-user@ec2-34-12-34-56.eu-west-1.compute.amazonaws.com
-#aws ec2 create-tags --resources  $INSTANCE_ID --tags 'Key="github-version",Value=${}'
+ssh -i $KEYPAIR_FILE ec2-user@${DNS_NAME}
