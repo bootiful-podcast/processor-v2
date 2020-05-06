@@ -11,7 +11,7 @@ do_run() {
   pip3 install --user --upgrade pipenv
   PATH=$PATH:/home/ec2-user/.local/bin/
   pipenv install
-  pipenv run python3 main2.py
+  pipenv run python3 main.py
 }
 
 do_run >/home/ec2-user/run.log 2>&1
