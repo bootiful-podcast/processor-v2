@@ -8,7 +8,7 @@ Type=simple
 Restart=always
 RestartSec=1
 User=ec2-user
-ExecStart=/usr/bin/env pipenv run python /home/ec2-user/app/start.py
+ExecStart=/usr/bin/env /home/ec2-user/app/run.sh
 
 [Install]
 WantedBy=multi-user.target
