@@ -24,3 +24,4 @@ if __name__ == "__main__":
     contents = replace_fragment(contents, "PODCAST_RMQ_ADDRESS=_PODCAST_RMQ_ADDRESS_",
                                 'PODCAST_RMQ_ADDRESS="%s"' % rmq_address)
     contents = replace_fragment(contents, "GITHUB_SHA=_GITHUB_SHA_", 'GITHUB_SHA="%s"' % rmq_address)
+    print(contents)
