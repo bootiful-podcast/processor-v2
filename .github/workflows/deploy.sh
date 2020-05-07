@@ -5,6 +5,7 @@ INSTANCE_TYPE=t3.large
 SUBNET_ID=subnet-05ec18a303fb18a5c
 SECURITY_GROUP_NAME=bootiful-podcast-sg
 
+
 #USER_DATA_URL=https://raw.githubusercontent.com/bootiful-podcast/python-test-to-deploy/master/.github/workflows/bootstrap.sh
 echo "GITHUB_SHA=$GITHUB_SHA"
 USER_DATA=$(python3 ./build-user-data-bootstrap.py $GITHUB_SHA $PODCAST_RMQ_ADDRESS)
@@ -55,7 +56,6 @@ if [ "$(aws ec2 describe-security-groups --region $AWS_REGION | jq -r '.Security
 fi
 
 SG_ID=$(aws ec2 describe-security-groups --region $AWS_REGION | jq -r "$(python3 build-jq-query.py $SECURITY_GROUP_NAME)")
-#SG_ID=$(aws ec2 describe-security-groups --region $AWS_REGION | jq -r ' .[] | map(select (.GroupName == "bootiful-podcast-sg") ) | .[0].GroupId ')
 echo "SG_ID=$SG_ID"
 
 ### Keypair

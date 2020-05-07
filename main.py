@@ -6,7 +6,6 @@ import podcast
 import rmq
 import s3
 import utils
-import boto3
 from common import *
 from utils import *
 
@@ -140,14 +139,11 @@ def rmq_background_thread_runner():
                 rmq_uri["path"],
                 handle_job,
             )
-        except Exception as e:
+        except Exception as ex:
             utils.log(
-                """
-            There was some sort of error installing a 
-            RabbitMQ listener. Restarting the processor...
-            """.strip()
+                """ There was some sort of error installing a RabbitMQ listener. Restarting the processor... """.strip()
             )
-            utils.exception(e)
+            utils.exception(ex)
 
 
 if __name__ == "__main__":
