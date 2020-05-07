@@ -146,7 +146,7 @@ def rmq_background_thread_runner():
 
 
 if __name__ == "__main__":
-    utils.log('PATH:', os.environ['PATH'])
+    utils.log('PATH:' + os.environ['PATH'])
     retry_count = 0
     max_retries = 5
     while retry_count < max_retries:
