@@ -6,6 +6,7 @@ import podcast
 import rmq
 import s3
 import utils
+import boto3
 from common import *
 from utils import *
 
@@ -17,10 +18,10 @@ def rmq_background_thread_runner():
     def resolve_config_file_name():
         config_fn_key = "CONFIG_FILE_NAME"
         config_fn = "config-development.json"
-        if config_fn_key in os.environ and os.environ[config_fn_key].strip() != '':
+        if config_fn_key in os.environ and os.environ[config_fn_key].strip() != "":
             config_fn = os.environ[config_fn_key]
 
-        utils.log('CONFIG_FILE_NAME=%s' % config_fn)
+        utils.log("CONFIG_FILE_NAME=%s" % config_fn)
 
         assert config_fn is not None, "the config file name could not be resolved"
         return config_fn
@@ -35,6 +36,10 @@ def rmq_background_thread_runner():
 
     requests_q = config["podcast-requests-queue"]
     replies_q = config["podcast-responses-exchange"]
+
+    aws_region_env = os.environ.get("AWS_REGION", "us-east-1")
+    utils.log("AWS_REGION (from Python): " + aws_region_env)
+    boto3.setup_default_session(region_name=aws_region_env)
 
     s3_client = s3.S3Client()
     s3_client.create_bucket(assets_s3_bucket)
@@ -68,12 +73,12 @@ def rmq_background_thread_runner():
             if not os.path.exists(the_directory):
                 os.makedirs(the_directory)
             assert os.path.exists(the_directory), (
-                    "the file, %s, should exist but does not" % the_directory
+                "the file, %s, should exist but does not" % the_directory
             )
             log("going to download %s to %s" % (s3_path, local_fn))
             s3_client.download(bucket, os.path.join(folder, fn), local_fn)
             assert os.path.exists(local_fn), (
-                    "the file should be downloaded to %s, but was not." % local_fn
+                "the file should be downloaded to %s, but was not." % local_fn
             )
             return local_fn
 
@@ -120,7 +125,7 @@ def rmq_background_thread_runner():
 
     address_key = "PODCAST_RMQ_ADDRESS"
     assert address_key in os.environ, (
-            'you must set the "%s" environment variable!' % address_key
+        'you must set the "%s" environment variable!' % address_key
     )
     rmq_uri = utils.parse_uri(os.environ[address_key])
 
@@ -146,7 +151,7 @@ def rmq_background_thread_runner():
 
 
 if __name__ == "__main__":
-    utils.log('PATH:' + os.environ['PATH'])
+    utils.log("PATH:" + os.environ["PATH"])
     retry_count = 0
     max_retries = 5
     while retry_count < max_retries:

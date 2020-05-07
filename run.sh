@@ -1,6 +1,16 @@
 #!/bin/bash
 
 do_run() {
+
+  #
+  # This program runs the service - it ensures that the ffmpeg in the github repository is on the PATH
+  # and installs the python codebase using Pipenv. This initial build could take some time on the first run.
+  # Subsequent runs _should_ be much faster.
+  #
+
+  export AWS_REGION="$(echo $(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone) | sed 's/[a-z]$//')"
+  echo $AWS_REGION
+
   echo $HOME
   whoami
   date -n

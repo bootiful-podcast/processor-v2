@@ -5,6 +5,11 @@ import uuid
 import boto3
 import utils
 
+#
+# https://linuxacademy.com/guide/14209-automating-aws-with-python-and-boto3/
+# why is the current region None?
+#
+
 
 def create_bucket_name(bucket_prefix):
     return "".join([bucket_prefix, str(uuid.uuid4())])
@@ -14,7 +19,7 @@ def create_bucket(s3, bucket):
     s3_connection = s3.meta.client
     session = boto3.session.Session()
     current_region = session.region_name
-    utils.log('the current region is ' + current_region)
+    utils.log("the current region is " + str(current_region))
     if current_region == "us-east-1":
         bucket_response = s3_connection.create_bucket(Bucket=bucket)
     else:
@@ -34,7 +39,7 @@ def download_file(s3, bucket, key, local_fn):
 
     s3.meta.client.download_file(bucket, key, local_fn)
     assert os.path.exists(local_fn), (
-            "the local file %s should have been downloaded" % local_fn
+        "the local file %s should have been downloaded" % local_fn
     )
 
 
