@@ -160,6 +160,6 @@ if __name__ == "__main__":
             rmq_background_thread_runner()
         except Exception as e:
             log("something went wrong trying to start the RabbitMQ processing thread!")
-
+            log(type(e))
             log(e)
     log("Exhausted retry count of %s times." % max_retries)
