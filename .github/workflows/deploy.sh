@@ -89,5 +89,5 @@ while [ "${DNS_NAME}" = "" ]; do
 done
 
 echo "DNS_NAME=$DNS_NAME"
-
+echo "Deploy finished"
 #ssh -i $KEYPAIR_FILE ec2-user@${DNS_NAME}
