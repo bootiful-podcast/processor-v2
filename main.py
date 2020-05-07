@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-
 import tempfile
-
 import podcast
+import boto3
 import rmq
 import s3
 import utils
@@ -37,13 +36,20 @@ def rmq_background_thread_runner():
     replies_q = config["podcast-responses-exchange"]
 
     aws_region_env = os.environ.get("AWS_REGION", "us-east-1")
-    # log("AWS_REGION (from Python): " + aws_region_env)
-    # boto3.setup_default_session(region_name=aws_region_env)
+
+    boto3.setup_default_session(region_name=aws_region_env)
 
     s3_client = s3.S3Client()
-    s3_client.create_bucket(assets_s3_bucket, region_name=aws_region_env)
-    s3_client.create_bucket(output_s3_bucket, region_name=aws_region_env)
-    s3_client.create_bucket(input_s3_bucket, region_name=aws_region_env)
+    try:
+        s3_client.create_bucket(assets_s3_bucket, region_name=aws_region_env)
+        s3_client.create_bucket(output_s3_bucket, region_name=aws_region_env)
+        s3_client.create_bucket(input_s3_bucket, region_name=aws_region_env)
+    except Exception as ex:
+        utils.exception(
+            ex,
+            message="could not create the buckets %s, %s, %s"
+            % (assets_s3_bucket, output_s3_bucket, input()),
+        )
 
     def handle_job(request):
         log("NEW REQUEST:")
@@ -63,7 +69,7 @@ def rmq_background_thread_runner():
 
         downloaded_files = {}
 
-        def download(s3_path):
+        def download(s3_path: str):
             log("going to download %s" % s3_path)
             parts = s3_path.split("/")
             bucket, folder, fn = parts[2:]
@@ -140,10 +146,10 @@ def rmq_background_thread_runner():
                 handle_job,
             )
         except Exception as ex:
-            utils.log(
-                """ There was some sort of error installing a RabbitMQ listener. Restarting the processor... """.strip()
+            utils.exception(
+                ex,
+                message="There was some sort of error installing a RabbitMQ listener. Restarting the processor... ",
             )
-            utils.exception(ex)
 
 
 if __name__ == "__main__":
@@ -155,7 +161,9 @@ if __name__ == "__main__":
             retry_count += 1
             rmq_background_thread_runner()
         except Exception as e:
-            log("something went wrong trying to start the RabbitMQ processing thread!")
-            log(type(e))
-            log(e)
+            utils.exception(
+                e,
+                message="something went wrong trying to start the RabbitMQ processing thread!",
+            )
+
     log("Exhausted retry count of %s times." % max_retries)

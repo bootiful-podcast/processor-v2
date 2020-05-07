@@ -78,7 +78,11 @@ def get_memory():
     return free_memory
 
 
-def exception(e: Exception):
+def exception(e: Exception, message=None):
+    assert e is not None, "the exception must not be None"
+    if message is not None:
+        log(message)
+    log(str(type(e)))
     logging.exception(e)
 
 
