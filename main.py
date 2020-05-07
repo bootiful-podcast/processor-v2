@@ -12,15 +12,12 @@ logging.getLogger().setLevel(logging.INFO)
 
 
 def rmq_background_thread_runner():
-    ##
     def resolve_config_file_name():
         config_fn_key = "CONFIG_FILE_NAME"
         config_fn = "config-development.json"
         if config_fn_key in os.environ and os.environ[config_fn_key].strip() != "":
             config_fn = os.environ[config_fn_key]
-
         log("CONFIG_FILE_NAME=%s" % config_fn)
-
         assert config_fn is not None, "the config file name could not be resolved"
         return config_fn
 
@@ -31,26 +28,11 @@ def rmq_background_thread_runner():
     assets_s3_bucket_folder = config["podcast-assets-s3-bucket-folder"]
     output_s3_bucket = config["podcast-output-s3-bucket"]
     input_s3_bucket = config["podcast-input-s3-bucket"]
-
     requests_q = config["podcast-requests-queue"]
     replies_q = config["podcast-responses-exchange"]
-
     aws_region_env = os.environ.get("AWS_REGION", "us-east-1")
-
     boto3.setup_default_session(region_name=aws_region_env)
-
     s3_client = s3.S3Client()
-    #
-    # try:
-    #     s3_client.create_bucket(assets_s3_bucket, region_name=aws_region_env)
-    #     s3_client.create_bucket(output_s3_bucket, region_name=aws_region_env)
-    #     s3_client.create_bucket(input_s3_bucket, region_name=aws_region_env)
-    # except BaseException as ex:
-    #     utils.exception(
-    #         ex,
-    #         message="could not create the buckets %s, %s, %s"
-    #         % (assets_s3_bucket, output_s3_bucket, input()),
-    #     )
 
     def handle_job(request):
         log("NEW REQUEST:")
@@ -154,7 +136,6 @@ def rmq_background_thread_runner():
 
 
 if __name__ == "__main__":
-    utils.log("PATH:" + os.environ["PATH"])
     retry_count = 0
     max_retries = 5
     while retry_count < max_retries:
