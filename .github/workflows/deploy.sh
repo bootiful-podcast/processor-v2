@@ -4,15 +4,16 @@ AWS_REGION=us-west-2
 INSTANCE_TYPE=t3.large
 SUBNET_ID=subnet-05ec18a303fb18a5c
 SECURITY_GROUP_NAME=bootiful-podcast-sg
-
-
-#USER_DATA_URL=https://raw.githubusercontent.com/bootiful-podcast/python-test-to-deploy/master/.github/workflows/bootstrap.sh
 echo "GITHUB_SHA=$GITHUB_SHA"
-USER_DATA=$(python3 ./build-user-data-bootstrap.py $GITHUB_SHA $PODCAST_RMQ_ADDRESS)
+
 KEYPAIR_NAME=bootiful-podcast
 KEYPAIR_FILE=$HOME/${KEYPAIR_NAME}.pem
+USER_DATA=$(python3 ./build-user-data-bootstrap.py $GITHUB_SHA $PODCAST_RMQ_ADDRESS)
 
 ## TODO: go through and terminate all running apps on script start.
+aws ec2 describe-instances --filter Name=tag:github_repository,Values="$GITHUB_REPOSITORY" Name=instance-state-name,Values=running --region $AWS_REGION | jq -r ".Reservations[].Instances[].InstanceId" | while read instance_id; do
+  aws ec2 terminate-instances --instance-ids "$instance_id"
+done
 
 ### VPC
 if [ "$(aws ec2 describe-vpcs --region $AWS_REGION | jq -r ' .Vpcs | length ' | grep 0)" = "0" ]; then
