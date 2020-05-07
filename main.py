@@ -41,9 +41,9 @@ def rmq_background_thread_runner():
 
     s3_client = s3.S3Client()
     try:
-        s3_client.create_bucket(assets_s3_bucket)
-        s3_client.create_bucket(output_s3_bucket)
-        s3_client.create_bucket(input_s3_bucket)
+        s3_client.create_bucket(assets_s3_bucket, region_name=aws_region_env)
+        s3_client.create_bucket(output_s3_bucket, region_name=aws_region_env)
+        s3_client.create_bucket(input_s3_bucket, region_name=aws_region_env)
     except BaseException as ex:
         utils.exception(
             ex,
