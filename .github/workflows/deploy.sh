@@ -4,15 +4,15 @@ AWS_REGION=us-west-2
 INSTANCE_TYPE=t3.large
 SUBNET_ID=subnet-05ec18a303fb18a5c
 SECURITY_GROUP_NAME=bootiful-podcast-sg
-echo "GITHUB_SHA=$GITHUB_SHA"
-
 KEYPAIR_NAME=bootiful-podcast
 KEYPAIR_FILE=$HOME/${KEYPAIR_NAME}.pem
 USER_DATA=$(python3 ./build-user-data-bootstrap.py $GITHUB_SHA $PODCAST_RMQ_ADDRESS)
 
-## TODO: go through and terminate all running apps on script start.
-aws ec2 describe-instances --filter Name=tag:github_repository,Values="$GITHUB_REPOSITORY" Name=instance-state-name,Values=running --region $AWS_REGION | jq -r ".Reservations[].Instances[].InstanceId" | while read instance_id; do
-  aws ec2 terminate-instances --instance-ids "$instance_id"
+### RESET
+### terminate all existing instances
+aws ec2 describe-instances --filter Name=tag:github_repository,Values="$GITHUB_REPOSITORY" Name=instance-state-name,Values=running --region $AWS_REGION | jq -r ".Reservations[].Instances[].InstanceId" | while read IID; do
+  echo "terminating ${IID}."
+  aws ec2 terminate-instances --instance-ids $IID --region $AWS_REGION
 done
 
 ### VPC
