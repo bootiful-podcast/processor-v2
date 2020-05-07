@@ -33,10 +33,24 @@ class S3Client(object):
         return local_fn
 
     def create_bucket(self, bucket_name, region_name="us-east-1"):
+        #     ACL = 'private' | 'public-read' | 'public-read-write' | 'authenticated-read',
+        #     Bucket = 'string',
+        #     CreateBucketConfiguration = {
+        #                                     'LocationConstraint': 'EU' | 'eu-west-1' | 'us-west-1' | 'us-west-2' | 'ap-south-1' | 'ap-southeast-1' | 'ap-southeast-2' | 'ap-northeast-1' | 'sa-east-1' | 'cn-north-1' | 'eu-central-1'
+        #                                 },
+        #     GrantFullControl = 'string',
+        #     GrantRead = 'string',
+        #     GrantReadACP = 'string',
+        #     GrantWrite = 'string',
+        #     GrantWriteACP = 'string',
+        #     ObjectLockEnabledForBucket = True | False
+        #
+        # )
+        create_bucket_config = {"LocationConstraint": region_name}
         return (
             bucket_name,
             self.s3.meta.client.create_bucket(
-                Bucket=bucket_name, LocationConstraint=region_name
+                Bucket=bucket_name, CreateBucketConfiguration=create_bucket_config
             ),
         )
 
