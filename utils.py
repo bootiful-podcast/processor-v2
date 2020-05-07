@@ -78,7 +78,7 @@ def get_memory():
     return free_memory
 
 
-def exception(e: Exception, message=None):
+def exception(e: BaseException, message=None):
     assert e is not None, "the exception must not be None"
     if message is not None:
         log(message)
