@@ -5,7 +5,7 @@ import urllib.request
 import os
 
 if __name__ == "__main__":
-    if len(sys.argv) == 4:  # when run in production
+    if len(sys.argv) == 3:  # when run in production
         github_sha = sys.argv[1]
         rmq_address = sys.argv[2]
     else:
@@ -17,7 +17,6 @@ if __name__ == "__main__":
         a, b = content.split(fragment)
         lines = [a, replacement, b]
         return os.linesep.join(lines)
-
 
     bootstrap_url = 'https://raw.githubusercontent.com/bootiful-podcast/python-test-to-deploy/%s/.github/workflows/bootstrap.sh' % github_sha
     contents = urllib.request.urlopen(bootstrap_url).read().decode("utf8")
