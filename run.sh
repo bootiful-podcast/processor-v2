@@ -3,14 +3,15 @@
 do_run() {
   echo $HOME
   whoami
+  date -n
   pwd
-  ffmpeg -version
   start_dir=$(cd "$(dirname $0)" && pwd)
   cd $start_dir
   echo "$start_dir"
   pwd
   pip3 install --user --upgrade pipenv
-  PATH=$PATH:/home/ec2-user/.local/bin/
+  export PATH=$PATH:/home/ec2-user/.local/bin/:/home/ec2-user/app/.github/workflows/bin/ffmpeg/
+  ffmpeg -version
   pipenv install
   pipenv run python3 main.py
 }
