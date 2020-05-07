@@ -21,7 +21,7 @@ def rmq_background_thread_runner():
         if config_fn_key in os.environ and os.environ[config_fn_key].strip() != "":
             config_fn = os.environ[config_fn_key]
 
-        utils.log("CONFIG_FILE_NAME=%s" % config_fn)
+        log("CONFIG_FILE_NAME=%s" % config_fn)
 
         assert config_fn is not None, "the config file name could not be resolved"
         return config_fn
@@ -38,7 +38,7 @@ def rmq_background_thread_runner():
     replies_q = config["podcast-responses-exchange"]
 
     aws_region_env = os.environ.get("AWS_REGION", "us-east-1")
-    utils.log("AWS_REGION (from Python): " + aws_region_env)
+    log("AWS_REGION (from Python): " + aws_region_env)
     boto3.setup_default_session(region_name=aws_region_env)
 
     s3_client = s3.S3Client()
