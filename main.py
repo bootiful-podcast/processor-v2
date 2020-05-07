@@ -40,16 +40,17 @@ def rmq_background_thread_runner():
     boto3.setup_default_session(region_name=aws_region_env)
 
     s3_client = s3.S3Client()
-    try:
-        s3_client.create_bucket(assets_s3_bucket, region_name=aws_region_env)
-        s3_client.create_bucket(output_s3_bucket, region_name=aws_region_env)
-        s3_client.create_bucket(input_s3_bucket, region_name=aws_region_env)
-    except BaseException as ex:
-        utils.exception(
-            ex,
-            message="could not create the buckets %s, %s, %s"
-            % (assets_s3_bucket, output_s3_bucket, input()),
-        )
+    #
+    # try:
+    #     s3_client.create_bucket(assets_s3_bucket, region_name=aws_region_env)
+    #     s3_client.create_bucket(output_s3_bucket, region_name=aws_region_env)
+    #     s3_client.create_bucket(input_s3_bucket, region_name=aws_region_env)
+    # except BaseException as ex:
+    #     utils.exception(
+    #         ex,
+    #         message="could not create the buckets %s, %s, %s"
+    #         % (assets_s3_bucket, output_s3_bucket, input()),
+    #     )
 
     def handle_job(request):
         log("NEW REQUEST:")
