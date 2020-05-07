@@ -10,6 +10,8 @@ SYSTEMD_SVC_NAME=bootiful-podcast-processor
 
 PODCAST_RMQ_ADDRESS=_PODCAST_RMQ_ADDRESS_
 
+GITHUB_SHA=_GITHUB_SHA_
+
 ### REPLACE ME
 
 # this bit is to be replaced by a script
@@ -26,10 +28,12 @@ do_bootstrap() {
   ### todo figure out how to get ffmpeg installed!
   ### todo https://www.johnvansickle.com/ffmpeg/
 
-  yum install -y autoconf automake bzip2 bzip2-devel cmake freetype-devel gcc gcc-c++ git libtool make mercurial pkgconfig zlib-devel
+#  yum install -y autoconf automake bzip2 bzip2-devel cmake freetype-devel gcc gcc-c++ git libtool make mercurial pkgconfig zlib-devel
 
+  echo "the github SHA is ${GITHUB_SHA} "
   git clone https://github.com/bootiful-podcast/python-test-to-deploy.git $APP_HOME
   cd $APP_HOME
+  git checkout $GITHUB_SHA
   chown -R ec2-user:ec2-user $APP_HOME
 
   touch $ENV_FILE
@@ -40,6 +44,8 @@ do_bootstrap() {
 
   systemctl start $SYSTEMD_SVC_NAME
   systemctl enable $SYSTEMD_SVC_NAME
+
+
 }
 
 do_bootstrap >$LOG 2>&1
