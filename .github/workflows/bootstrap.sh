@@ -22,13 +22,20 @@ GITHUB_SHA=_GITHUB_SHA_
 do_bootstrap() {
   mkdir -p $APP_HOME
   mkdir -p $EC2_HOME
-  rpm --import http://packages.atrpms.net/RPM-GPG-KEY.atrpms
+
+  ### FFMPEG
+
+#  curl https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz --output $HOME/ffmpeg.tar.xz
+#  tar xpf $HOME/ffmpeg.tar.xz --directory $HOME/bin
+#  cd $HOME/bin
+  ### FFMPEG
+
 
   yum install -y python37 python37-pip git
   ### todo figure out how to get ffmpeg installed!
   ### todo https://www.johnvansickle.com/ffmpeg/
 
-#  yum install -y autoconf automake bzip2 bzip2-devel cmake freetype-devel gcc gcc-c++ git libtool make mercurial pkgconfig zlib-devel
+  #  yum install -y autoconf automake bzip2 bzip2-devel cmake freetype-devel gcc gcc-c++ git libtool make mercurial pkgconfig zlib-devel
 
   echo "the github SHA is ${GITHUB_SHA} "
   git clone https://github.com/bootiful-podcast/python-test-to-deploy.git $APP_HOME
