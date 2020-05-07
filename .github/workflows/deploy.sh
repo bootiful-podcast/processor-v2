@@ -6,6 +6,7 @@ SUBNET_ID=subnet-05ec18a303fb18a5c
 SECURITY_GROUP_NAME=bootiful-podcast-sg
 
 #USER_DATA_URL=https://raw.githubusercontent.com/bootiful-podcast/python-test-to-deploy/master/.github/workflows/bootstrap.sh
+echo "GITHUB_SHA=$GITHUB_SHA"
 USER_DATA=$(python3 ./build-user-data-bootstrap.py $GITHUB_SHA $PODCAST_RMQ_ADDRESS)
 KEYPAIR_NAME=bootiful-podcast
 KEYPAIR_FILE=$HOME/${KEYPAIR_NAME}.pem
