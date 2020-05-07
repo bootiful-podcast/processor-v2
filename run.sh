@@ -12,7 +12,7 @@ do_run() {
   echo $AWS_REGION
   echo $HOME
   whoami
-  date -n
+  date
   pwd
   start_dir=$(cd "$(dirname $0)" && pwd)
   cd $start_dir
