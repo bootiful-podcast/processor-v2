@@ -13,8 +13,8 @@ PODCAST_RMQ_ADDRESS=_PODCAST_RMQ_ADDRESS_
 ### REPLACE ME
 
 # this bit is to be replaced by a script
-#https://medium.com/@benmorel/creating-a-linux-service-with-systemd-611b5c8b91d6
-#https://www.linux.com/training-tutorials/understanding-and-using-systemd/
+# https://medium.com/@benmorel/creating-a-linux-service-with-systemd-611b5c8b91d6
+# https://www.linux.com/training-tutorials/understanding-and-using-systemd/
 # https://www.johnvansickle.com/ffmpeg/ <- statically linked ffmpeg binaries
 
 do_bootstrap() {
