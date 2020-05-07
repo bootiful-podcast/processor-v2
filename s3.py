@@ -5,46 +5,15 @@ import uuid
 import boto3
 import utils
 
+
 #
 # https://linuxacademy.com/guide/14209-automating-aws-with-python-and-boto3/
 # why is the current region None?
 #
 
 
-def create_bucket_name(bucket_prefix):
-    return "".join([bucket_prefix, str(uuid.uuid4())])
-
-
-def create_bucket(s3, bucket):
-    s3_connection = s3.meta.client
-    session = boto3.session.Session()
-    current_region = session.region_name
-    utils.log("the current region is " + str(current_region))
-    if current_region == "us-east-1":
-        bucket_response = s3_connection.create_bucket(Bucket=bucket)
-    else:
-        bucket_response = s3_connection.create_bucket(
-            Bucket=bucket, LocationConstraint=current_region
-        )
-    return bucket, bucket_response
-
-
-def write_file(s3, bucket, key, local_fn):
-    s3.meta.client.upload_file(local_fn, bucket, key)
-
-
-def download_file(s3, bucket, key, local_fn):
-    if os.path.exists(local_fn):
-        return True
-
-    s3.meta.client.download_file(bucket, key, local_fn)
-    assert os.path.exists(local_fn), (
-        "the local file %s should have been downloaded" % local_fn
-    )
-
-
-def list_buckets(s3):
-    return s3.buckets.all()
+# def create_bucket_name(bucket_prefix):
+#     return "".join([bucket_prefix, str(uuid.uuid4())])
 
 
 class S3Client(object):
@@ -52,15 +21,25 @@ class S3Client(object):
         self.s3 = s3
 
     def upload(self, bucket_name, key, fn):
-        write_file(self.s3, bucket_name, key, fn)
+        self.s3.meta.client.upload_file(fn, bucket_name, key)
 
-    def download(self, bucket_name, key, fn):
-        download_file(self.s3, bucket_name, key, fn)
-        return fn
+    def download(self, bucket_name, key, local_fn):
+        if os.path.exists(local_fn):
+            return True
+        self.s3.meta.client.download_file(bucket_name, key, local_fn)
+        assert os.path.exists(local_fn), (
+            "the local file %s should have been downloaded" % local_fn
+        )
+        return local_fn
 
-    def create_bucket(self, bucket_name):
-        return create_bucket(self.s3, bucket_name)
+    def create_bucket(self, bucket_name, region_name="us-east-1"):
+        return (
+            bucket_name,
+            self.s3.meta.client.create_bucket(
+                Bucket=bucket_name, LocationConstraint=region_name
+            ),
+        )
 
     @property
     def buckets(self):
-        return list_buckets(self.s3)
+        return self.s3.buckets.all()

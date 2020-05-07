@@ -38,13 +38,13 @@ def rmq_background_thread_runner():
     replies_q = config["podcast-responses-exchange"]
 
     aws_region_env = os.environ.get("AWS_REGION", "us-east-1")
-    log("AWS_REGION (from Python): " + aws_region_env)
-    boto3.setup_default_session(region_name=aws_region_env)
+    # log("AWS_REGION (from Python): " + aws_region_env)
+    # boto3.setup_default_session(region_name=aws_region_env)
 
     s3_client = s3.S3Client()
-    s3_client.create_bucket(assets_s3_bucket)
-    s3_client.create_bucket(output_s3_bucket)
-    s3_client.create_bucket(input_s3_bucket)
+    s3_client.create_bucket(assets_s3_bucket, region_name=aws_region_env)
+    s3_client.create_bucket(output_s3_bucket, region_name=aws_region_env)
+    s3_client.create_bucket(input_s3_bucket, region_name=aws_region_env)
 
     def handle_job(request):
         log("NEW REQUEST:")
