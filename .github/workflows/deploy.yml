@@ -5,16 +5,11 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   PODCAST_RMQ_ADDRESS: ${{ secrets.PODCAST_RMQ_ADDRESS }}
-  CONFIG_FILE_NAME: config-development.json
-  ## todo change that to the production value!
-
-#  AMI_ID: ami-06fcc1f0bc2c8943f
-#  KEYPAIR: bootiful-podcast_processor_05-02-2020
-#  SECURITY_GROUP: web-host
-#  INSTANCE_TYPE: t2.large
-#  VPC_ID: vpc-0accf75a6ca3a1a45
-#  SUBNET_ID: subnet-094fab188362e9346
-#  INSTANCE_TYPE: t1.micro
+  BP_MODE: development
+  AMI_ID: ami-0d6621c01e8c2de2c
+  INSTANCE_TYPE: t3.large
+  SECURITY_GROUP_NAME: bootiful-podcast-sg
+  KEYPAIR_NAME: bootiful-podcast-kp
 
 on:
   push:

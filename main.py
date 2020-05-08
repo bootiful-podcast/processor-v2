@@ -13,16 +13,15 @@ logging.getLogger().setLevel(logging.INFO)
 
 def rmq_background_thread_runner():
     def resolve_config_file_name():
-        config_fn_key = "CONFIG_FILE_NAME"
-        config_fn = "config-development.json"
-        if config_fn_key in os.environ and os.environ[config_fn_key].strip() != "":
-            config_fn = os.environ[config_fn_key]
-        log("CONFIG_FILE_NAME=%s" % config_fn)
-        assert config_fn is not None, "the config file name could not be resolved"
-        return config_fn
+        return 'config-%s.json' % os.environ.get('BP_MODE', 'development')
 
-    config = load_config(resolve_config_file_name())
+    config_fn = resolve_config_file_name()
+    config = load_config(config_fn)
+    log('=' * 100)
+    log('configuration file: %s ' % config_fn)
+    log('mode: %s ' % config_fn)
     log(config)
+    log('=' * 100)
 
     assets_s3_bucket = config["podcast-assets-s3-bucket"]
     assets_s3_bucket_folder = config["podcast-assets-s3-bucket-folder"]
@@ -61,12 +60,12 @@ def rmq_background_thread_runner():
             if not os.path.exists(the_directory):
                 os.makedirs(the_directory)
             assert os.path.exists(the_directory), (
-                "the file, %s, should exist but does not" % the_directory
+                    "the file, %s, should exist but does not" % the_directory
             )
             log("going to download %s to %s" % (s3_path, local_fn))
             s3_client.download(bucket, os.path.join(folder, fn), local_fn)
             assert os.path.exists(local_fn), (
-                "the file should be downloaded to %s, but was not." % local_fn
+                    "the file should be downloaded to %s, but was not." % local_fn
             )
             return local_fn
 
@@ -113,7 +112,7 @@ def rmq_background_thread_runner():
 
     address_key = "PODCAST_RMQ_ADDRESS"
     assert address_key in os.environ, (
-        'you must set the "%s" environment variable!' % address_key
+            'you must set the "%s" environment variable!' % address_key
     )
     rmq_uri = utils.parse_uri(os.environ[address_key])
 

@@ -1,11 +1,8 @@
 #!/bin/sh
-AMI_ID=ami-0d6621c01e8c2de2c
-AWS_REGION=us-west-2
-INSTANCE_TYPE=t3.large
-SECURITY_GROUP_NAME=bootiful-podcast-sg
-KEYPAIR_NAME=bootiful-podcast
+
+
 KEYPAIR_FILE=$HOME/${KEYPAIR_NAME}.pem
-USER_DATA=$(python3 ./build-user-data-bootstrap.py $GITHUB_SHA $PODCAST_RMQ_ADDRESS)
+USER_DATA=$(python3 ./build-user-data-bootstrap.py $GITHUB_SHA $PODCAST_RMQ_ADDRESS  $BP_MODE)
 
 ### RESET
 ### terminate all existing instances

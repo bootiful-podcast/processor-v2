@@ -18,6 +18,7 @@ def process(fn: types.FunctionType, id_str: str):
 def load_config(file):
     import json
 
+
     with open(file) as fp:
         return json.loads(fp.read())
 
