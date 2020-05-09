@@ -11,13 +11,6 @@ env:
   PODCAST_RMQ_ADDRESS_development: ${{ secrets.PODCAST_RMQ_ADDRESS_development }}
   PODCAST_RMQ_ADDRESS_production: ${{ secrets.PODCAST_RMQ_ADDRESS_production }}
 
-#  BP_MODE: development
-#  PODCAST_RMQ_ADDRESS: ${{ secrets.PODCAST_RMQ_ADDRESS }}
-#  AMI_ID: ami-0d6621c01e8c2de2c
-#  INSTANCE_TYPE: t3.large
-#  SECURITY_GROUP_NAME: bootiful-podcast-sg
-#  KEYPAIR_NAME: bootiful-podcast-kp
-
 on:
   create:
   push:
