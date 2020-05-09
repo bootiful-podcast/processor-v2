@@ -29,7 +29,7 @@ def rmq_background_thread_runner():
     input_s3_bucket = config["podcast-input-s3-bucket"]
     requests_q = config["podcast-requests-queue"]
     replies_q = config["podcast-responses-exchange"]
-    aws_region_env = os.environ.get("AWS_REGION", "us-east-1")
+    aws_region_env = os.environ.get("AWS_REGION", "us-west-2")
     boto3.setup_default_session(region_name=aws_region_env)
     s3_client = s3.S3Client()
 

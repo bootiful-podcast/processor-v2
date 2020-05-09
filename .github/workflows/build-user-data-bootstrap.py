@@ -5,8 +5,6 @@ import urllib.request
 import os
 
 if __name__ == "__main__":
-    # curl http://169.254.169.254/latest/user-data
-    ## that'll show the current instances user-data to confirm everything's working
 
     def replace_fragment(content, fragment, replacement):
         a, b = content.split(fragment)
@@ -14,7 +12,7 @@ if __name__ == "__main__":
         return os.linesep.join(lines)
 
     github_sha = "master"
-    rmq_address = "a test"
+    rmq_address = None
     bp_mode = "development"
     if len(sys.argv) > 1:
         github_sha = sys.argv[1]
