@@ -10,8 +10,9 @@ fi
 
 echo "BP_MODE=${BP_MODE}"
 
-# amzn2-ami-hvm-2.0.20200406.0-x86_64-gp2 (ami-0d6621c01e8c2de2c)
-# Amazon Linux 2 AMI 2.0.20200406.0 x86_64 HVM gp2 / 8gb  / Owner 137112412989
+
+AWS_REGION_development=us-west-2
+AWS_REGION_production=us-east-1
 
 AMI_ID_development=ami-0d6621c01e8c2de2c
 AMI_ID_production=ami-0ce2e5b7d27317779
