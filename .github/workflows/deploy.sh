@@ -25,6 +25,7 @@ for V in ${VARIABLE_NAMES[*]}; do
 done
 
 #
+echo " $GITHUB_SHA : $PODCAST_RMQ_ADDRESS : $BP_MODE "
 KEYPAIR_FILE=$HOME/${KEYPAIR_NAME}.pem
 USER_DATA=$(python3 ./build-user-data-bootstrap.py $GITHUB_SHA $PODCAST_RMQ_ADDRESS $BP_MODE)
 
