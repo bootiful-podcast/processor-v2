@@ -1,4 +1,4 @@
-# !/usr/bin/env python3
+#!/usr/bin/env python3
 
 import sys
 import urllib.request
@@ -14,7 +14,6 @@ if __name__ == "__main__":
     github_sha = "master"
     rmq_address = None
     bp_mode = "development"
-    print(sys.argv)
     if len(sys.argv) > 1:
         github_sha = sys.argv[1]
         rmq_address = sys.argv[2]
@@ -36,3 +35,5 @@ if __name__ == "__main__":
 
     print(contents)
     print("#" + bootstrap_url)
+    print(os.linesep)
+    print(os.linesep)

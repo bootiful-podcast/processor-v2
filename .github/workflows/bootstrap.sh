@@ -16,18 +16,11 @@ GITHUB_SHA=_GITHUB_SHA_
 
 ### REPLACE ME
 
-# this bit is to be replaced by a script
-# https://medium.com/@benmorel/creating-a-linux-service-with-systemd-611b5c8b91d6
-# https://www.linux.com/training-tutorials/understanding-and-using-systemd/
-# https://www.johnvansickle.com/ffmpeg/ <- statically linked ffmpeg binaries
-
 do_bootstrap() {
   mkdir -p $APP_HOME
   mkdir -p $EC2_HOME
 
   yum install -y python37 python37-pip git
-  ### todo figure out how to get ffmpeg installed!
-  ### todo https://www.johnvansickle.com/ffmpeg/
 
   echo "the github SHA is ${GITHUB_SHA} "
   git clone https://github.com/bootiful-podcast/python-test-to-deploy.git $APP_HOME
