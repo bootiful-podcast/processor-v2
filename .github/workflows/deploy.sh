@@ -10,12 +10,12 @@ fi
 
 echo "BP_MODE=${BP_MODE}"
 
-
 AWS_REGION_development=us-west-2
 AWS_REGION_production=us-east-1
 
 AMI_ID_development=ami-0d6621c01e8c2de2c
-AMI_ID_production=ami-0ce2e5b7d27317779
+AMI_ID_production=ami-0323c3dd2da7fb37d
+
 
 VARIABLE_NAMES=(PODCAST_RMQ_ADDRESS AMI_ID AWS_REGION)
 for V in ${VARIABLE_NAMES[*]}; do
@@ -26,7 +26,8 @@ done
 
 #
 echo " $GITHUB_SHA : $PODCAST_RMQ_ADDRESS : $BP_MODE "
-echo "  $PODCAST_RMQ_ADDRESS_development :: $PODCAST_RMQ_ADDRESS_production   "
+echo " $PODCAST_RMQ_ADDRESS_development :: $PODCAST_RMQ_ADDRESS_production "
+
 KEYPAIR_FILE=$HOME/${KEYPAIR_NAME}.pem
 USER_DATA=$(python3 ./build-user-data-bootstrap.py $GITHUB_SHA $PODCAST_RMQ_ADDRESS $BP_MODE)
 
@@ -65,7 +66,7 @@ SUBNET_ID=$(aws ec2 describe-subnets --region $AWS_REGION | jq -r '.Subnets[0].S
 echo "SUBNET_ID=$SUBNET_ID"
 
 ### Route Tables
-### We don't create a new one because it'TO_EVAL already done when we create the stuff above. (Should we?)
+### We don't create a new one because it's already done when we create the stuff above. (Should we?)
 ROUTE_TABLE_ID=$(aws ec2 describe-route-tables --region $AWS_REGION | jq -r '.RouteTables[0].RouteTableId')
 aws ec2 associate-route-table --route-table-id $ROUTE_TABLE_ID --subnet-id $SUBNET_ID --region $AWS_REGION >/dev/null
 aws ec2 create-route --route-table-id $ROUTE_TABLE_ID --destination-cidr-block 0.0.0.0/0 --gateway-id $IG_ID --region $AWS_REGION >/dev/null
