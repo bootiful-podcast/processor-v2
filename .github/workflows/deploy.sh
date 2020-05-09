@@ -1,8 +1,25 @@
-#!/bin/sh
+#!/bin/bash
 
+#####
+export BP_MODE="development"
+if [ "$GITHUB_EVENT_NAME" = "create" ]; then
+  if [[ "${GITHUB_REF}" =~ "tags" ]]; then
+    BP_MODE="production"
+  fi
+fi
+
+echo "BP_MODE=${BP_MODE}"
+
+VARIABLE_NAMES=(AWS_REGION PODCAST_RMQ_ADDRESS PODBEAN_CLIENT_ID PODBEAN_CLIENT_SECRET)
+for V in ${VARIABLE_NAMES[*]}; do
+  TO_EVAL="export ${V}=\$${V}_${BP_MODE}"
+  echo $TO_EVAL
+  eval $TO_EVAL
+done
+#####
 
 KEYPAIR_FILE=$HOME/${KEYPAIR_NAME}.pem
-USER_DATA=$(python3 ./build-user-data-bootstrap.py $GITHUB_SHA $PODCAST_RMQ_ADDRESS  $BP_MODE)
+USER_DATA=$(python3 ./build-user-data-bootstrap.py $GITHUB_SHA $PODCAST_RMQ_ADDRESS $BP_MODE)
 
 ### RESET
 ### terminate all existing instances
@@ -39,7 +56,7 @@ SUBNET_ID=$(aws ec2 describe-subnets --region $AWS_REGION | jq -r '.Subnets[0].S
 echo "SUBNET_ID=$SUBNET_ID"
 
 ### Route Tables
-### We don't create a new one because it's already done when we create the stuff above. (Should we?)
+### We don't create a new one because it'TO_EVAL already done when we create the stuff above. (Should we?)
 ROUTE_TABLE_ID=$(aws ec2 describe-route-tables --region $AWS_REGION | jq -r '.RouteTables[0].RouteTableId')
 aws ec2 associate-route-table --route-table-id $ROUTE_TABLE_ID --subnet-id $SUBNET_ID --region $AWS_REGION >/dev/null
 aws ec2 create-route --route-table-id $ROUTE_TABLE_ID --destination-cidr-block 0.0.0.0/0 --gateway-id $IG_ID --region $AWS_REGION >/dev/null
