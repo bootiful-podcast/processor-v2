@@ -14,6 +14,7 @@ if __name__ == "__main__":
     github_sha = "master"
     rmq_address = None
     bp_mode = "development"
+    print(sys.argv)
     if len(sys.argv) > 1:
         github_sha = sys.argv[1]
         rmq_address = sys.argv[2]
