@@ -16,7 +16,6 @@ AWS_REGION_production=us-east-1
 AMI_ID_development=ami-0d6621c01e8c2de2c
 AMI_ID_production=ami-0323c3dd2da7fb37d
 
-
 VARIABLE_NAMES=(PODCAST_RMQ_ADDRESS AMI_ID AWS_REGION)
 for V in ${VARIABLE_NAMES[*]}; do
   TO_EVAL="export ${V}=\$${V}_${BP_MODE}"
@@ -24,10 +23,8 @@ for V in ${VARIABLE_NAMES[*]}; do
   eval $TO_EVAL
 done
 
-#
-echo " $GITHUB_SHA : $PODCAST_RMQ_ADDRESS : $BP_MODE "
-echo " $PODCAST_RMQ_ADDRESS_development :: $PODCAST_RMQ_ADDRESS_production "
-
+###
+### Userdata
 KEYPAIR_FILE=$HOME/${KEYPAIR_NAME}.pem
 USER_DATA=$(python3 build-user-data-bootstrap.py $GITHUB_SHA $PODCAST_RMQ_ADDRESS $BP_MODE)
 echo "$USER_DATA"
@@ -94,7 +91,7 @@ fi
 IMAGE_NAME=$AMI_ID #todo can we fix this later? it'd be nice to query for the image and get the latest and greatest, i guess.
 
 ### todo: it would be nice to find a way to query for the tags of any instances, see if they have the same github repository, and if so - terminate them.
-INSTANCE_ID=$(aws ec2 run-instances --iam-instance-profile Name=bootiful-podcast-processor --user-data "${USER_DATA}" --region $AWS_REGION --image-id $IMAGE_NAME --count 1 --instance-type $INSTANCE_TYPE --key-name $KEYPAIR_NAME --security-group-ids $SG_ID --subnet-id $SUBNET_ID --tag-specifications "$(python3 build-github-resource-tags.py $GITHUB_REPOSITORY $GITHUB_SHA)" --associate-public-ip-address | jq -r '.Instances[0].InstanceId')
+INSTANCE_ID=$(aws ec2 run-instances  --iam-instance-profile Name=bootiful-podcast-processor --user-data "${USER_DATA}" --region $AWS_REGION --image-id $IMAGE_NAME --count 1 --instance-type $INSTANCE_TYPE --key-name $KEYPAIR_NAME --security-group-ids $SG_ID --subnet-id $SUBNET_ID --tag-specifications "$(python3 build-github-resource-tags.py $GITHUB_REPOSITORY $GITHUB_SHA)" --associate-public-ip-address | jq -r '.Instances[0].InstanceId')
 echo "INSTANCE_ID=$INSTANCE_ID"
 
 aws ec2 create-tags --resources $INSTANCE_ID --tags Key=github_repository,Value="$GITHUB_REPOSITORY"
