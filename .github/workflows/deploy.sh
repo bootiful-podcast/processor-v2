@@ -91,7 +91,7 @@ fi
 IMAGE_NAME=$AMI_ID #todo can we fix this later? it'd be nice to query for the image and get the latest and greatest, i guess.
 
 ### todo: it would be nice to find a way to query for the tags of any instances, see if they have the same github repository, and if so - terminate them.
-INSTANCE_ID=$(aws ec2 run-instances  --iam-instance-profile Name=bootiful-podcast-processor --user-data "${USER_DATA}" --region $AWS_REGION --image-id $IMAGE_NAME --count 1 --instance-type $INSTANCE_TYPE --key-name $KEYPAIR_NAME --security-group-ids $SG_ID --subnet-id $SUBNET_ID --tag-specifications "$(python3 build-github-resource-tags.py $GITHUB_REPOSITORY $GITHUB_SHA)" --associate-public-ip-address | jq -r '.Instances[0].InstanceId')
+INSTANCE_ID=$(aws ec2 run-instances  --iam-instance-profile Name=bootiful-podcast-processor --user-data "$USER_DATA" --region $AWS_REGION --image-id $IMAGE_NAME --count 1 --instance-type $INSTANCE_TYPE --key-name $KEYPAIR_NAME --security-group-ids $SG_ID --subnet-id $SUBNET_ID --tag-specifications "$(python3 build-github-resource-tags.py $GITHUB_REPOSITORY $GITHUB_SHA)" --associate-public-ip-address | jq -r '.Instances[0].InstanceId')
 echo "INSTANCE_ID=$INSTANCE_ID"
 
 aws ec2 create-tags --resources $INSTANCE_ID --tags Key=github_repository,Value="$GITHUB_REPOSITORY"
