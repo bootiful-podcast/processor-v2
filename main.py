@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 import tempfile
-import podcast
+import typing
 import boto3
+
+import podcast
 import rmq
 import s3
-import utils
 from common import *
 from utils import *
 
@@ -29,7 +30,7 @@ def rmq_background_thread_runner():
     input_s3_bucket = config["podcast-input-s3-bucket"]
     requests_q = config["podcast-requests-queue"]
     replies_q = config["podcast-responses-exchange"]
-    aws_region_env = os.environ.get("AWS_REGION", "us-west-2")
+    aws_region_env = os.environ.get("AWS_REGION")
     boto3.setup_default_session(region_name=aws_region_env)
     s3_client = s3.S3Client()
 
@@ -41,6 +42,7 @@ def rmq_background_thread_runner():
         uid = request["uid"]
         normalized_uid_str = normalize_string(uid)
         tmpdir = os.path.join(tempfile.gettempdir(), normalized_uid_str)
+        output_dir = os.path.join(tmpdir, "output")
 
         def build_full_s3_asset_path_for(fn):
             return "s3://%s/%s/%s" % (assets_s3_bucket, assets_s3_bucket_folder, fn)
@@ -51,18 +53,18 @@ def rmq_background_thread_runner():
 
         downloaded_files = {}
 
-        def download(s3_path: str):
-            log("going to download %s" % s3_path)
-            parts = s3_path.split("/")
+        def download(s3p: str) -> str:
+            log("going to download %s" % s3p)
+            parts: typing.List[str] = s3p.split("/")
             bucket, folder, fn = parts[2:]
-            local_fn = os.path.join(tmpdir, "downloads", bucket, folder, fn)
-            the_directory = os.path.dirname(local_fn)
+            local_fn: str = os.path.join(tmpdir, "downloads", bucket, folder, fn)
+            the_directory: str = os.path.dirname(local_fn)
             if not os.path.exists(the_directory):
                 os.makedirs(the_directory)
             assert os.path.exists(the_directory), (
-                "the file, %s, should exist but does not" % the_directory
+                "the directory, %s, should exist but does not" % the_directory
             )
-            log("going to download %s to %s" % (s3_path, local_fn))
+            log("going to download %s to %s" % (s3p, local_fn))
             s3_client.download(bucket, os.path.join(folder, fn), local_fn)
             assert os.path.exists(local_fn), (
                 "the file should be downloaded to %s, but was not." % local_fn
@@ -78,7 +80,6 @@ def rmq_background_thread_runner():
         ]:
             downloaded_files[s3_path] = download(s3_path)
 
-        output_dir = os.path.join(tmpdir, "output")
         reset_and_recreate_directory(output_dir)
         results = podcast.create_podcast(
             downloaded_files[asset_intro],
@@ -114,7 +115,7 @@ def rmq_background_thread_runner():
     assert address_key in os.environ, (
         'you must set the "%s" environment variable!' % address_key
     )
-    rmq_uri = utils.parse_uri(os.environ[address_key])
+    rmq_uri = parse_uri(os.environ[address_key])
 
     while True:
         try:
@@ -128,7 +129,7 @@ def rmq_background_thread_runner():
                 handle_job,
             )
         except Exception as ex:
-            utils.exception(
+            exception(
                 ex,
                 message="There was some sort of error installing a RabbitMQ listener. Restarting the processor... ",
             )
@@ -142,7 +143,7 @@ if __name__ == "__main__":
             retry_count += 1
             rmq_background_thread_runner()
         except Exception as e:
-            utils.exception(
+            exception(
                 e,
                 message="something went wrong trying to start the RabbitMQ processing thread!",
             )
