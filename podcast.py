@@ -5,9 +5,9 @@ from pydub import AudioSegment
 from utils import *
 import utils
 
-log = logging.getLogger("pydub.converter")
-log.setLevel(logging.DEBUG)
-log.addHandler(logging.StreamHandler())
+logger = logging.getLogger("pydub.converter")
+logger.setLevel(logging.DEBUG)
+logger.addHandler(logging.StreamHandler())
 
 
 def create_podcast(
