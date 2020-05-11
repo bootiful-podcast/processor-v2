@@ -57,14 +57,13 @@ def create_podcast(
 
     def write(ext):
         output_file_name = os.path.join(output_dir, "%s.%s" % ("podcast", ext))
-        log("exporting to %s" % output_file_name)
+        utils.log("exporting to %s" % output_file_name)
         out.export(output_file_name, format=ext, bitrate="256k")
         assert os.path.exists(
             output_file_name
         ), "the .%s file should've been created at %s" % (ext, output_file_name)
         return_value[ext] = [output_file_name]
-
-        log("the output directory's size is %s " % os.path.getsize(output_dir))
+        utils.log("the output directory's size is %s " % os.path.getsize(output_dir))
 
     for ext in output_formats:
         utils.log("about to write file of type %s" % ext)
