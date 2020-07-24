@@ -11,7 +11,6 @@ from utils import *
 
 logging.getLogger().setLevel(logging.INFO)
 
-
 def rmq_background_thread_runner():
     def resolve_config_file_name():
         return "config-%s.json" % os.environ.get("BP_MODE", "development")
