@@ -6,7 +6,6 @@ import resource
 import shutil
 import types
 
-
 def process(fn: types.FunctionType, id_str: str):
     logging.info(f"before {id_str} @ {datetime.datetime.now()}")
     proc = multiprocessing.Process(target=fn)
@@ -14,13 +13,11 @@ def process(fn: types.FunctionType, id_str: str):
     logging.info(f"after {id_str} @ {datetime.datetime.now()}")
     return proc
 
-
 def load_config(file):
     import json
 
     with open(file) as fp:
         return json.loads(fp.read())
-
 
 def parse_uri(uri):
     import urllib.parse
