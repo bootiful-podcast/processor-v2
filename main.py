@@ -13,8 +13,12 @@ logging.getLogger().setLevel(logging.INFO)
 
 def rmq_background_thread_runner():
 
+
+
     def resolve_config_file_name():
-        return "config-%s.json" % os.environ.get("BP_MODE", "development")
+        bp_mode = os.environ.get("BP_MODE", "development")
+        log('BP_MODE: %s' %  bp_mode)
+        return "config-%s.json" % bp_mode
 
     config_fn = resolve_config_file_name()
     config = load_config(config_fn)
