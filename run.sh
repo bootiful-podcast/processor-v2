@@ -12,4 +12,9 @@ ffmpeg -version
 echo $HOME
 
 python ${ROOT_DIR}/config_aws.py $HOME/.aws
-python ${ROOT_DIR}/main.py
+
+ls -la $HOME/.aws/*
+
+cat $HOME/.aws/config
+
+#python ${ROOT_DIR}/main.py
