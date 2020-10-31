@@ -17,4 +17,4 @@ ls -la $HOME/.aws/*
 
 cat $HOME/.aws/config
 
-#python ${ROOT_DIR}/main.py
+python ${ROOT_DIR}/main.py
