@@ -87,7 +87,20 @@ def exception(e: BaseException, message=None):
     logging.exception(e)
 
 
+configured_logging = False
+
+
 def log(s: str):
+    from logging import getLogger, Formatter, StreamHandler
+    global configured_logging
+    if not configured_logging:
+        the_logger = getLogger()
+        the_logger.setLevel(logging.INFO)
+        the_formatter = Formatter("%(asctime)s [%(threadName)s] [%(levelname)s] %(name)s: %(message)s  ")
+        console_handler = StreamHandler()
+        console_handler.setFormatter(the_formatter)
+        the_logger.addHandler(console_handler)
+        configured_logging = True
     logging.info(s)
 
 

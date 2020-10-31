@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
-import tempfile
-import typing
-import boto3
 
+import tempfile
+import boto3
 import podcast
 import rmq
 import s3
+import json
+import threading
 from common import *
 from utils import *
-
-logging.getLogger().setLevel(logging.INFO)
-
+from flask import Flask
 
 def rmq_background_thread_runner():
     address_key = "PODCAST_RMQ_ADDRESS"
@@ -137,16 +136,37 @@ def rmq_background_thread_runner():
 
 
 if __name__ == "__main__":
-    retry_count = 0
-    max_retries = 5
-    while retry_count < max_retries:
-        try:
-            retry_count += 1
-            rmq_background_thread_runner()
-        except Exception as e:
-            exception(
-                e,
-                message="something went wrong trying to start the RabbitMQ processing thread!",
-            )
 
-    log("Exhausted retry count of %s times." % max_retries)
+    def run_flask():
+        app = Flask(__name__)
+
+        @app.route("/")
+        def hello():
+            return json.dumps({'status': 'HODOR'})
+
+        log('about to start the Flask service')
+        app.run(port=8080)
+
+
+    def run_rmq():
+
+        retry_count = 0
+        max_retries = 5
+        while retry_count < max_retries:
+            try:
+                retry_count += 1
+                log('launching RabbitMQ background thread')
+                rmq_background_thread_runner()
+            except Exception as e:
+                exception(
+                    e,
+                    message="something went wrong trying to start the RabbitMQ processing thread!",
+                )
+
+        log("Exhausted retry count of %s times." % max_retries)
+
+
+    for f in [run_flask, run_rmq]:
+        threading.Thread(target=f).start()
+
+    log('launched RabbitMQ and Flask threads.')

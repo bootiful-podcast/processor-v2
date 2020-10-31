@@ -12,6 +12,10 @@ if __name__ == "__main__":
     if not os.path.exists(aws_dir):
         os.makedirs(aws_dir)
 
+    keys = ["AWS_REGION", "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"]
+    for k in keys:
+        assert k in os.environ, 'the key %s must be found in the environment ' % k
+
     ## CREDENTIALS
     aws_region = os.environ["AWS_REGION"]
     aws_access_key_id = os.environ["AWS_ACCESS_KEY_ID"]
@@ -27,11 +31,11 @@ aws_secret_access_key = %s
 
     ## CONFIG
     tpl = (
-        """
-[default]
-region = %s
-    """.strip()
-        % aws_region
+            """
+    [default]
+    region = %s
+        """.strip()
+            % aws_region
     )
     with open(os.path.join(aws_dir, "config"), "w") as fp:
         fp.write(tpl)
