@@ -22,9 +22,9 @@ spec:
           imagePullPolicy: Always
           resources:
             limits:
-              memory: "4Gi"
+              memory: "5Gi"
             requests:
-              memory: "4Gi"
+              memory: "5Gi"
           name: processor
           env:
             - name: PORT

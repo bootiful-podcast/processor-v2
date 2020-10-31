@@ -19,11 +19,11 @@ PROJECT_ID=${GKE_PROJECT:-pgtm-jlong}
 cd $ROOT_DIR
 pwd
 
-#pack build -B heroku/buildpacks:18 $APP_NAME
-#image_id=$(docker images -q $APP_NAME)
-#docker tag "${image_id}" gcr.io/${PROJECT_ID}/${APP_NAME}
-#docker push gcr.io/${PROJECT_ID}/${APP_NAME}
-#docker pull gcr.io/${PROJECT_ID}/${APP_NAME}:latest
+pack build -B heroku/buildpacks:18 $APP_NAME
+image_id=$(docker images -q $APP_NAME)
+docker tag "${image_id}" gcr.io/${PROJECT_ID}/${APP_NAME}
+docker push gcr.io/${PROJECT_ID}/${APP_NAME}
+docker pull gcr.io/${PROJECT_ID}/${APP_NAME}:latest
 
 APP_YAML=${ROOT_DIR}/deploy/processor.yaml
 APP_SERVICE_YAML=${ROOT_DIR}/deploy/processor-service.yaml
