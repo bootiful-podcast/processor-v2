@@ -11,16 +11,17 @@ from utils import *
 
 logging.getLogger().setLevel(logging.INFO)
 
+
 def rmq_background_thread_runner():
+    address_key = "PODCAST_RMQ_ADDRESS"
+    assert address_key in os.environ, 'you must set the "%s" environment variable!' % address_key
 
-
-
-    def resolve_config_file_name():
-        bp_mode = os.environ.get("BP_MODE", "development")
-        log('BP_MODE: %s' %  bp_mode)
+    def resolve_config_file_name() -> str:
+        bp_mode: str = os.environ.get("BP_MODE", "development")
+        log('BP_MODE: %s' % bp_mode)
         return "config-%s.json" % bp_mode
 
-    config_fn = resolve_config_file_name()
+    config_fn: str = resolve_config_file_name()
     config = load_config(config_fn)
     log("=" * 60)
     log("configuration file: %s " % config_fn)
@@ -31,12 +32,12 @@ def rmq_background_thread_runner():
     assets_s3_bucket = config["podcast-assets-s3-bucket"]
     assets_s3_bucket_folder = config["podcast-assets-s3-bucket-folder"]
     output_s3_bucket = config["podcast-output-s3-bucket"]
-    input_s3_bucket = config["podcast-input-s3-bucket"]
+    # input_s3_bucket = config["podcast-input-s3-bucket"]
     requests_q = config["podcast-requests-queue"]
     replies_q = config["podcast-responses-exchange"]
     aws_region_env = os.environ.get("AWS_REGION")
     boto3.setup_default_session(region_name=aws_region_env)
-    s3_client = s3.S3Client()
+    s3_client: s3.S3Client = s3.S3Client()
 
     def handle_job(request):
         log("NEW REQUEST:")
@@ -48,7 +49,7 @@ def rmq_background_thread_runner():
         tmpdir = os.path.join(tempfile.gettempdir(), normalized_uid_str)
         output_dir = os.path.join(tmpdir, "output")
 
-        def build_full_s3_asset_path_for(fn):
+        def build_full_s3_asset_path_for(fn: str):
             return "s3://%s/%s/%s" % (assets_s3_bucket, assets_s3_bucket_folder, fn)
 
         asset_closing = build_full_s3_asset_path_for("closing.mp3")
@@ -66,12 +67,12 @@ def rmq_background_thread_runner():
             if not os.path.exists(the_directory):
                 os.makedirs(the_directory)
             assert os.path.exists(the_directory), (
-                "the directory, %s, should exist but does not" % the_directory
+                    "the directory, %s, should exist but does not" % the_directory
             )
             log("going to download %s to %s" % (s3p, local_fn))
             s3_client.download(bucket, os.path.join(folder, fn), local_fn)
             assert os.path.exists(local_fn), (
-                "the file should be downloaded to %s, but was not." % local_fn
+                    "the file should be downloaded to %s, but was not." % local_fn
             )
             return local_fn
 
@@ -115,10 +116,6 @@ def rmq_background_thread_runner():
 
         return reply
 
-    address_key = "PODCAST_RMQ_ADDRESS"
-    assert address_key in os.environ, (
-        'you must set the "%s" environment variable!' % address_key
-    )
     rmq_uri = parse_uri(os.environ[address_key])
 
     while True:

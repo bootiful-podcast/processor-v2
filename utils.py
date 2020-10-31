@@ -5,6 +5,8 @@ import os
 import resource
 import shutil
 import types
+import typing
+
 
 def process(fn: types.FunctionType, id_str: str):
     logging.info(f"before {id_str} @ {datetime.datetime.now()}")
@@ -13,13 +15,15 @@ def process(fn: types.FunctionType, id_str: str):
     logging.info(f"after {id_str} @ {datetime.datetime.now()}")
     return proc
 
-def load_config(file):
+
+def load_config(file) -> str:
     import json
 
     with open(file) as fp:
         return json.loads(fp.read())
 
-def parse_uri(uri):
+
+def parse_uri(uri) -> typing.Dict[str, object]:
     import urllib.parse
 
     parsed_uri = urllib.parse.urlparse(uri)
@@ -32,7 +36,7 @@ def parse_uri(uri):
     else:
         host = h
 
-    res = {
+    res: typing.Dict[str, object] = {
         "scheme": parsed_uri.scheme,
         "path": parsed_uri.path[1:],
         "username": u,
@@ -43,7 +47,7 @@ def parse_uri(uri):
     return res
 
 
-def is_linux():
+def is_linux() -> bool:
     import platform
 
     if platform.system().lower() == "linux":
@@ -56,22 +60,22 @@ def limit_memory():
         return
 
     soft, hard = resource.getrlimit(resource.RLIMIT_AS)
-    memory = get_memory()
+    memory: int = get_memory()
     log("there is %s memory" % memory)
-    resource.setrlimit(resource.RLIMIT_AS, (memory / 4, hard))
+    resource.setrlimit(resource.RLIMIT_AS, (int(memory / 4), hard))
 
 
-def get_memory():
+def get_memory() -> int:
     if not is_linux():
-        return
+        return -1
 
     with open("/proc/meminfo", "r") as mem:
         free_memory = 0
         for i in mem:
             log(i)
-            sline = i.split()
-            if str(sline[0]) in ("MemFree:"):  # , 'Buffers:', 'Cached:'
-                free_memory += int(sline[1]) / 1024  # kB
+            split_line = i.split()
+            if str(split_line[0]) in "MemFree:":
+                free_memory += int(split_line[1]) / 1024  # kB
     return free_memory
 
 
@@ -87,7 +91,7 @@ def log(s: str):
     logging.info(s)
 
 
-def require_env_variable(k):
+def require_env_variable(k) -> str:
     assert k in os.environ, 'the environment variable "%s" does not exist.' % k
     return os.environ[k]
 
