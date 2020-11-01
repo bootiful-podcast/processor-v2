@@ -6,23 +6,45 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   PODCAST_RMQ_ADDRESS_development: ${{ secrets.PODCAST_RMQ_ADDRESS_development }}
   PODCAST_RMQ_ADDRESS_production: ${{ secrets.PODCAST_RMQ_ADDRESS_production }}
+  GKE_ZONE: ${{ secrets.GKE_ZONE }}
+  GKE_CLUSTER: ${{ secrets.GKE_CLUSTER }}
+  GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
+  GKE_SA_KEY: ${{ secrets.GKE_SA_KEY }}
 
 on:
   create:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
-
-  install-processor:
+  build:
     runs-on: ubuntu-latest
     steps:
+
       - uses: actions/checkout@v2
 
-      - name: inspect
-        run: cd $GITHUB_WORKSPACE && pwd  && find . && env
+      - uses: actions/setup-node@master
+        with:
+          node-version: '10.x'
 
-      - name: run deploy.sh
-        run: cd $GITHUB_WORKSPACE/  && ./deploy.sh
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: '290.0.1'
+          service_account_key: ${{ secrets.GKE_SA_KEY }}
+          project_id: ${{ secrets.GKE_PROJECT }}
+
+      - run: |-
+          gcloud --quiet auth configure-docker
+
+      - run: |-
+          gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+
+      - name: Setup gcloud environment
+        uses: GoogleCloudPlatform/github-actions@0.1.2
+
+      - name: Deploy to the cluster
+        run: |
+          cd $GITHUB_WORKSPACE
+          ./deploy/deploy.sh

@@ -19,13 +19,11 @@ PROJECT_ID=${GKE_PROJECT:-pgtm-jlong}
 cd $ROOT_DIR
 pwd
 
-## TODO restore this
-#pack build -B heroku/buildpacks:18 $APP_NAME
-#image_id=$(docker images -q $APP_NAME)
-#docker tag "${image_id}" gcr.io/${PROJECT_ID}/${APP_NAME}
-#docker push gcr.io/${PROJECT_ID}/${APP_NAME}
-#docker pull gcr.io/${PROJECT_ID}/${APP_NAME}:latest
-## TODO restore this
+pack build -B heroku/buildpacks:18 $APP_NAME
+image_id=$(docker images -q $APP_NAME)
+docker tag "${image_id}" gcr.io/${PROJECT_ID}/${APP_NAME}
+docker push gcr.io/${PROJECT_ID}/${APP_NAME}
+docker pull gcr.io/${PROJECT_ID}/${APP_NAME}:latest
 
 APP_YAML=${ROOT_DIR}/deploy/processor.yaml
 APP_SERVICE_YAML=${ROOT_DIR}/deploy/processor-service.yaml
@@ -51,7 +49,8 @@ stringData:
 
 kubectl apply -f $APP_YAML
 kubectl get service | grep $APP_NAME || kubectl apply -f $APP_SERVICE_YAML
-#
+
+
 #kubectl create deployment ${APP_NAME} --image=gcr.io/${PROJECT_ID}/${APP_NAME}
 #kubectl expose deployment ${APP_NAME} --port=80 --target-port=8080 --name=${APP_NAME} --type=LoadBalancer
 #kubectl describe services $APP_NAME
