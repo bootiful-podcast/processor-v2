@@ -2,9 +2,9 @@ import types
 
 
 def retry(
-        fn: types.FunctionType,
-        fallback: types.FunctionType = lambda: None,
-        max_retries: int = 10,
+    fn: types.FunctionType,
+    fallback: types.FunctionType = lambda: None,
+    max_retries: int = 10,
 ):
     assert fn is not None, "you must provide a valid function"
     assert max_retries > -1, "you must retry 0 or more times"
@@ -44,18 +44,15 @@ if __name__ == "__main__":
     def bad(name: str):
         return "hello %s" % name
 
-
     @retryable(max_retries=5)
     def badder(name: str):
         if name.lower() == "josh".lower():
             raise Exception("danger!")
         return bad(name)
 
-
     @retryable(fallback=lambda n: "oops")
     def baddest(name: str):
         return badder(name)
-
 
     assert bad("jane") == "hello jane"
     assert badder("josh") is None

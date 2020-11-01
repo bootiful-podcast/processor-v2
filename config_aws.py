@@ -14,7 +14,7 @@ if __name__ == "__main__":
 
     keys = ["AWS_REGION", "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"]
     for k in keys:
-        assert k in os.environ, 'the key %s must be found in the environment ' % k
+        assert k in os.environ, "the key %s must be found in the environment " % k
 
     ## CREDENTIALS
     aws_region = os.environ["AWS_REGION"]
@@ -31,11 +31,11 @@ aws_secret_access_key = %s
 
     ## CONFIG
     tpl = (
-            """
+        """
     [default]
     region = %s
         """.strip()
-            % aws_region
+        % aws_region
     )
     with open(os.path.join(aws_dir, "config"), "w") as fp:
         fp.write(tpl)

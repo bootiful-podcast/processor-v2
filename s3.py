@@ -9,7 +9,6 @@ import typing
 
 
 class S3Client(object):
-
     def __init__(self, s3=boto3.resource("s3")):
         self.s3 = s3
 

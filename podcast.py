@@ -11,19 +11,18 @@ logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler())
 
 
-
 def create_podcast(
-        asset_intro_file: str,
-        asset_music_segue_file: str,
-        asset_closing_file: str,
-        episode_intro_file: str,
-        episode_interview_file: str,
-        output_directory: str,
-        output_formats: typing.List[str] = ["mp3"],
+    asset_intro_file: str,
+    asset_music_segue_file: str,
+    asset_closing_file: str,
+    episode_intro_file: str,
+    episode_interview_file: str,
+    output_directory: str,
+    output_formats: typing.List[str] = ["mp3"],
 ):
-    assert os.path.exists(output_directory) or reset_and_recreate_directory(output_directory), (
-            "the directory %s does not exist " "and couldn't be created" % output_directory
-    )
+    assert os.path.exists(output_directory) or reset_and_recreate_directory(
+        output_directory
+    ), ("the directory %s does not exist " "and couldn't be created" % output_directory)
 
     files = [
         asset_intro_file,
@@ -51,11 +50,10 @@ def create_podcast(
     interview = audio_segments[4]
 
     out = (
-        intro
-            .append(host_intro, crossfade=10 * 1000)
-            .append(first_segue, crossfade=10 * 1000)
-            .append(interview, crossfade=5 * 1000)
-            .append(closing, crossfade=5 * 1000)
+        intro.append(host_intro, crossfade=10 * 1000)
+        .append(first_segue, crossfade=10 * 1000)
+        .append(interview, crossfade=5 * 1000)
+        .append(closing, crossfade=5 * 1000)
     )
 
     def write(ext: str):
@@ -66,7 +64,9 @@ def create_podcast(
             output_file_name
         ), "the .%s file should've been created at %s" % (ext, output_file_name)
         return_value[ext] = [output_file_name]
-        utils.log("the output directory's size is %s " % os.path.getsize(output_directory))
+        utils.log(
+            "the output directory's size is %s " % os.path.getsize(output_directory)
+        )
 
     for ext in output_formats:
         utils.log("about to write file of type %s" % ext)
@@ -79,13 +79,15 @@ if __name__ == "__main__":
     import os
     import os.path
 
-
     def valid_path_env_var(k: str) -> str:
-        assert k is not None and k in os.environ, "there is no environment variable called %s" % k
+        assert k is not None and k in os.environ, (
+            "there is no environment variable called %s" % k
+        )
         value: str = os.path.expanduser(os.environ.get(k))
-        assert os.path.exists(value), "the directory pointed to by %s does not exist" % k
+        assert os.path.exists(value), (
+            "the directory pointed to by %s does not exist" % k
+        )
         return value
-
 
     assets_dir: str = valid_path_env_var("PODCAST_ASSETS_DIR")
     output_dir: str = valid_path_env_var("PODCAST_OUTPUT_DIR")

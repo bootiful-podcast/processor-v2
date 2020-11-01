@@ -11,13 +11,16 @@ from common import *
 from utils import *
 from flask import Flask
 
+
 def rmq_background_thread_runner():
     address_key = "PODCAST_RMQ_ADDRESS"
-    assert address_key in os.environ, 'you must set the "%s" environment variable!' % address_key
+    assert address_key in os.environ, (
+        'you must set the "%s" environment variable!' % address_key
+    )
 
     def resolve_config_file_name() -> str:
         bp_mode: str = os.environ.get("BP_MODE", "development")
-        log('BP_MODE: %s' % bp_mode)
+        log("BP_MODE: %s" % bp_mode)
         return "config-%s.json" % bp_mode
 
     config_fn: str = resolve_config_file_name()
@@ -66,12 +69,12 @@ def rmq_background_thread_runner():
             if not os.path.exists(the_directory):
                 os.makedirs(the_directory)
             assert os.path.exists(the_directory), (
-                    "the directory, %s, should exist but does not" % the_directory
+                "the directory, %s, should exist but does not" % the_directory
             )
             log("going to download %s to %s" % (s3p, local_fn))
             s3_client.download(bucket, os.path.join(folder, fn), local_fn)
             assert os.path.exists(local_fn), (
-                    "the file should be downloaded to %s, but was not." % local_fn
+                "the file should be downloaded to %s, but was not." % local_fn
             )
             return local_fn
 
@@ -142,11 +145,10 @@ if __name__ == "__main__":
 
         @app.route("/")
         def hello():
-            return json.dumps({'status': 'HODOR'})
+            return json.dumps({"status": "HODOR"})
 
-        log('about to start the Flask service')
+        log("about to start the Flask service")
         app.run(port=8080)
-
 
     def run_rmq():
 
@@ -155,7 +157,7 @@ if __name__ == "__main__":
         while retry_count < max_retries:
             try:
                 retry_count += 1
-                log('launching RabbitMQ background thread')
+                log("launching RabbitMQ background thread")
                 rmq_background_thread_runner()
             except Exception as e:
                 exception(
@@ -165,8 +167,7 @@ if __name__ == "__main__":
 
         log("Exhausted retry count of %s times." % max_retries)
 
-
     for f in [run_flask, run_rmq]:
         threading.Thread(target=f).start()
 
-    log('launched RabbitMQ and Flask threads.')
+    log("launched RabbitMQ and Flask threads.")
