@@ -38,6 +38,9 @@ jobs:
       - name: "Setup Initial Environment"
         run: |
           source $GITHUB_WORKSPACE/.github/workflows/bp_mode.sh
+          P="${GITHUB_WORKSPACE}/bin"
+          mkdir -p $P
+          echo "${P}" >> $GITHUB_PATH
 
       - name: Setup GCP environment
         uses: GoogleCloudPlatform/github-actions@0.1.2
@@ -64,4 +67,5 @@ jobs:
       - name: Deploy Processor
         run: |
           cd $GITHUB_WORKSPACE
+          (curl -sSL "https://github.com/buildpacks/pack/releases/download/v0.14.2/pack-v0.14.2-linux.tgz" | sudo tar -C $GITHUB_WORKSPACE/bin/ --no-same-owner -xzv pack)
           ./deploy/deploy.sh
