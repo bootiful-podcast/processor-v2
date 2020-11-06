@@ -18,8 +18,10 @@ docker pull gcr.io/${PROJECT_ID}/${APP_NAME}:latest
 APP_YAML=${ROOT_DIR}/deploy/processor.yaml
 APP_SERVICE_YAML=${ROOT_DIR}/deploy/processor-service.yaml
 SECRETS=${APP_NAME}-secrets
-RMQ_USER=$(read_kubernetes_secret rabbitmq-secrets RABBITMQ_DEFAULT_USER)
-RMQ_PW=$(read_kubernetes_secret rabbitmq-secrets RABBITMQ_DEFAULT_PASS)
+
+
+RMQ_USER=$BP_RABBITMQ_MANAGEMENT_USERNAME
+RMQ_PW=$BP_RABBITMQ_MANAGEMENT_PASSWORD
 
 kubectl delete secrets ${SECRETS} || echo "could not delete ${SECRETS}."
 kubectl delete -f "$APP_YAML" || echo "could not delete the existing Kubernetes environment as described in ${APP_YAML}."
