@@ -1,23 +1,13 @@
 #!/usr/bin/env bash
-
-function read_kubernetes_secret() {
-  kubectl get secret $1 -o jsonpath="{.data.$2}" | base64 --decode
-}
-
-echo "Deploying Processor..."
-BP_MODE=${1:-DEVELOPMENT}
-echo BP_MODE=${BP_MODE}
-if [ "$BP_MODE" = "DEVELOPMENT" ]; then
-  echo "were using the development variables, not the production ones."
-fi
+set -e
+set -o pipefail
 
 ROOT_DIR=$(cd $(dirname $0)/.. && pwd)
-echo ROOT_DIR is $ROOT_DIR
 APP_NAME=processor
-PROJECT_ID=${GKE_PROJECT:-pgtm-jlong}
+PROJECT_ID=$GCLOUD_PROJECT
 
 cd $ROOT_DIR
-pwd
+
 
 pack build -B heroku/buildpacks:18 $APP_NAME
 image_id=$(docker images -q $APP_NAME)

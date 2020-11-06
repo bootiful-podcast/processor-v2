@@ -1,15 +1,25 @@
-name: build
+name: Deploy Processor
 
 env:
-  AWS_REGION: ${{ secrets.AWS_REGION }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  PODCAST_RMQ_ADDRESS_development: ${{ secrets.PODCAST_RMQ_ADDRESS_development }}
-  PODCAST_RMQ_ADDRESS_production: ${{ secrets.PODCAST_RMQ_ADDRESS_production }}
-  GKE_ZONE: ${{ secrets.GKE_ZONE }}
-  GKE_CLUSTER: ${{ secrets.GKE_CLUSTER }}
-  GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
-  GKE_SA_KEY: ${{ secrets.GKE_SA_KEY }}
+  GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
+  GIT_USERNAME: ${{ secrets.GIT_USERNAME }}
+  CONFIGURATION_SERVER_USERNAME: ${{ secrets.CONFIGURATION_SERVER_USERNAME }}
+  CONFIGURATION_SERVER_PASSWORD: ${{ secrets.CONFIGURATION_SERVER_PASSWORD }}
+  GCLOUD_ZONE_DEVELOPMENT: ${{ secrets.GCLOUD_ZONE_DEVELOPMENT }}
+  GCLOUD_PROJECT_DEVELOPMENT: ${{ secrets.GCLOUD_PROJECT_DEVELOPMENT }}
+  GCLOUD_SA_KEY: ${{ secrets.GCLOUD_SA_KEY }}
+
+
+#env:
+##  AWS_REGION: ${{ secrets.AWS_REGION }}
+##  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+##  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+##  PODCAST_RMQ_ADDRESS_development: ${{ secrets.PODCAST_RMQ_ADDRESS_development }}
+##  PODCAST_RMQ_ADDRESS_production: ${{ secrets.PODCAST_RMQ_ADDRESS_production }}
+#  GKE_ZONE: ${{ secrets.GKE_ZONE }}
+#  GKE_CLUSTER: ${{ secrets.GKE_CLUSTER }}
+#  GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
+#  GKE_SA_KEY: ${{ secrets.GKE_SA_KEY }}
 
 on:
   create:
@@ -25,26 +35,33 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      - uses: actions/setup-node@master
-        with:
-          node-version: '10.x'
+      - name: "Setup Initial Environment"
+        run: |
+          source $GITHUB_WORKSPACE/.github/workflows/bp_mode.sh
+
+      - name: Setup GCP environment
+        uses: GoogleCloudPlatform/github-actions@0.1.2
 
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           version: '290.0.1'
-          service_account_key: ${{ secrets.GKE_SA_KEY }}
-          project_id: ${{ secrets.GKE_PROJECT }}
+          service_account_key: ${{ secrets.GCLOUD_SA_KEY }}
+          project_id: ${{ secrets.GCLOUD_PROJECT }}
 
-      - run: |-
+      - run: |
+          gcloud config set project $GCLOUD_PROJECT
           gcloud --quiet auth configure-docker
 
       - run: |-
-          gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+          gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone "$GCLOUD_ZONE" --project $GCLOUD_PROJECT
 
-      - name: Setup gcloud environment
-        uses: GoogleCloudPlatform/github-actions@0.1.2
+      - name: Connect to Config Server for Configuration
+        run: |
+          source $GITHUB_WORKSPACE/.github/workflows/config_client.sh
+          install_config_client_cli
+          hydrate_environment_from_config_server
 
-      - name: Deploy to the cluster
+      - name: Deploy Processor
         run: |
           cd $GITHUB_WORKSPACE
           ./deploy/deploy.sh
