@@ -34,6 +34,7 @@ metadata:
 type: Opaque
 stringData:
   PODCAST_RMQ_ADDRESS: amqp://${RMQ_USER}:${RMQ_PW}@rabbitmq/
+  BP_MODE: "${BP_MODE_LOWERCASE}"
   AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
   AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
   AWS_REGION: "${AWS_REGION}"
