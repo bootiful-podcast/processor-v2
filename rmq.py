@@ -6,13 +6,13 @@ import utils
 
 
 def start_rabbitmq_processor(
-    requests_q: str,
-    replies_q: str,
-    rabbit_host: str,
-    rabbit_username: str,
-    rabbit_password: str,
-    rabbit_vhost: str,
-    process_job_requests_fn,
+        requests_q: str,
+        replies_q: str,
+        rabbit_host: str,
+        rabbit_username: str,
+        rabbit_password: str,
+        rabbit_vhost: str,
+        process_job_requests_fn,
 ):
     utils.log(
         """Establishing a connection to RabbitMQ host '%s', having virtual host '%s', with username '%s'. """.strip()
@@ -34,6 +34,10 @@ def start_rabbitmq_processor(
             host=rabbit_host,
             virtual_host=rabbit_vhost,
             credentials=pika.PlainCredentials(rabbit_username, rabbit_password),
+            heartbeat=0
+            # socket_timeout=5 * 60,
+            # stack_timeout=5 * 60,
+            # blocked_connection_timeout=5 * 60
         )
 
     with pika.BlockingConnection(params) as connection:
