@@ -24,12 +24,18 @@ def start_rabbitmq_processor(
         if rabbit_vhost == "/" or rabbit_vhost == "":
             rabbit_vhost = None
 
+    utils.log('setting heartbeat=0')
+
     if rabbit_vhost is None:
+        utils.log('vhost is None')
+
         params = pika.ConnectionParameters(
             host=rabbit_host,
             credentials=pika.PlainCredentials(rabbit_username, rabbit_password),
+            heartbeat=0,
         )
     else:
+        utils.log('vhost is not None')
         params = pika.ConnectionParameters(
             host=rabbit_host,
             virtual_host=rabbit_vhost,
