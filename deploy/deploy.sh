@@ -9,7 +9,7 @@ OD=${ROOT_DIR}/overlays/${BP_MODE_LOWERCASE}
 SECRETS=${APP_NAME}-secrets
 SECRETS_FN=${OD}/${APP_NAME}-secrets.env
 
-cd $ROOT_DIR
+cd $ROOT_DIR/..
 
 pack build -B heroku/buildpacks:18 $APP_NAME
 image_id=$(docker images -q $APP_NAME)
@@ -17,6 +17,8 @@ docker tag "${image_id}" gcr.io/${PROJECT_ID}/${APP_NAME}
 docker push gcr.io/${PROJECT_ID}/${APP_NAME}
 docker pull gcr.io/${PROJECT_ID}/${APP_NAME}:latest
 
+
+cd $ROOT_DIR
 APP_YAML=${ROOT_DIR}/deploy/processor.yaml
 APP_SERVICE_YAML=${ROOT_DIR}/deploy/processor-service.yaml
 RMQ_USER=$BP_RABBITMQ_MANAGEMENT_USERNAME
