@@ -1,0 +1,14 @@
+---
+resources:
+  - deployment.yaml
+  - service.yaml
+
+namespace: development
+
+commonLabels:
+  env: development
+  app: processor
+
+secretGenerator:
+  - name: processor-secrets
+    env: processor-secrets.env
