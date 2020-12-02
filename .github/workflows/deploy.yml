@@ -13,6 +13,8 @@ env:
   GCLOUD_SA_KEY: ${{ secrets.GCLOUD_SA_KEY }}
   GH_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
   ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+  GKE_CLUSTER_NAME_PRODUCTION: ${{ secrets.GKE_CLUSTER_NAME_PRODUCTION }}
+  GKE_CLUSTER_NAME_DEVELOPMENT: ${{ secrets.GKE_CLUSTER_NAME_DEVELOPMENT }}
 
 on:
   repository_dispatch:
@@ -30,9 +32,11 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      - name: "Setup Initial Environment"
+      - uses: bootiful-podcast/bp-mode-github-action@v34
+
+      - name: "Setup PATH"
         run: |
-          source $GITHUB_WORKSPACE/.github/workflows/bp_mode.sh
+          # source $GITHUB_WORKSPACE/.github/workflows/bp_mode.sh
           P="${GITHUB_WORKSPACE}/bin"
           mkdir -p $P
           echo "${P}" >> $GITHUB_PATH
@@ -47,15 +51,27 @@ jobs:
       - run: |
           gcloud config set project $GCLOUD_PROJECT
           gcloud --quiet auth configure-docker
-
-      - run: |-
           gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone "$GCLOUD_ZONE" --project $GCLOUD_PROJECT
 
-      - name: Connect to Config Server for Configuration
+      - name: Discover Spring Cloud Config Server
         run: |
-          source $GITHUB_WORKSPACE/.github/workflows/config_client.sh
-          install_config_client_cli
-          hydrate_environment_from_config_server
+          CONFIG_IP=$( kubectl get svc configuration -n $BP_MODE_LOWERCASE --output="jsonpath={.status.loadBalancer.ingress[0].ip}" )
+          echo "The configuration service lives at ${CONFIG_IP}. "
+          echo "CONFIGURATION_SERVER_HOST=${CONFIG_IP}" >> $GITHUB_ENV
+
+      - uses: joshlong/config-client-github-action@v29
+        with:
+          config-server-uri: http://${CONFIGURATION_SERVER_HOST}
+          config-server-username: ${{ secrets.CONFIGURATION_SERVER_USERNAME  }}
+          config-server-password: ${{ secrets.CONFIGURATION_SERVER_PASSWORD  }}
+          config-server-application-id: deployment
+          config-server-profile: ${{ env.BP_MODE_LOWERCASE }}
+
+#      - name: Connect to Config Server for Configuration
+#        run: |
+#          source $GITHUB_WORKSPACE/.github/workflows/config_client.sh
+#          install_config_client_cli
+#          hydrate_environment_from_config_server
 
       - name: Deploy Processor
         run: |
