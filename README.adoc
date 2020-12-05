@@ -2,7 +2,7 @@
 
 
 
-![Processor](https://github.com/bootiful-podcast/processor-v2/workflows/Deploy/badge.svg)
+image::https://github.com/bootiful-podcast/processor-v2/workflows/Deploy/badge.svg[Status]
 
 
 == Description
