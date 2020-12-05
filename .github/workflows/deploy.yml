@@ -36,7 +36,6 @@ jobs:
 
       - name: "Setup PATH"
         run: |
-          # source $GITHUB_WORKSPACE/.github/workflows/bp_mode.sh
           P="${GITHUB_WORKSPACE}/bin"
           mkdir -p $P
           echo "${P}" >> $GITHUB_PATH
