@@ -2,7 +2,7 @@
 
 
 
-![Processor](https://github.com/bootiful-podcast/processor-v2/workflows/RabbitMQ%20Utilities/badge.svg)
+![Processor](https://github.com/bootiful-podcast/processor-v2/workflows/Deploy/badge.svg)
 
 
 == Description
