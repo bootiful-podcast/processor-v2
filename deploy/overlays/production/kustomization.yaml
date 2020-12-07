@@ -1,0 +1,9 @@
+---
+bases:
+  - ../development/
+
+commonLabels:
+  env: production
+
+namespace: production  
+
