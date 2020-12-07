@@ -66,12 +66,6 @@ jobs:
           config-server-application-id: deployment
           config-server-profile: ${{ env.BP_MODE_LOWERCASE }}
 
-#      - name: Connect to Config Server for Configuration
-#        run: |
-#          source $GITHUB_WORKSPACE/.github/workflows/config_client.sh
-#          install_config_client_cli
-#          hydrate_environment_from_config_server
-
       - name: Deploy Processor
         run: |
           cd $GITHUB_WORKSPACE

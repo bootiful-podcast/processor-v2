@@ -7,7 +7,7 @@ ROOT_DIR=$(cd $(dirname $0) && pwd)
 BP_MODE_LOWERCASE=${BP_MODE_LOWERCASE:-development}
 OD=${ROOT_DIR}/overlays/${BP_MODE_LOWERCASE}
 SECRETS=${APP_NAME}-secrets
-SECRETS_FN=${OD}/${APP_NAME}-secrets.env
+SECRETS_FN=${ROOT_DIR}/overlays/development/${APP_NAME}-secrets.env
 
 cd $ROOT_DIR/..
 
