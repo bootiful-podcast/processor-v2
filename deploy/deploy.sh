@@ -23,7 +23,7 @@ APP_YAML=${ROOT_DIR}/deploy/processor.yaml
 APP_SERVICE_YAML=${ROOT_DIR}/deploy/processor-service.yaml
 RMQ_USER=$BP_RABBITMQ_MANAGEMENT_USERNAME
 RMQ_PW=$BP_RABBITMQ_MANAGEMENT_PASSWORD
-SECRETS_FN=${OD}/${APP_NAME}-secrets.env
+#SECRETS_FN=${OD}/${APP_NAME}-secrets.env
 rm -rf $SECRETS_FN
 touch $SECRETS_FN
 echo writing to "$SECRETS_FN "
