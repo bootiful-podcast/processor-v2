@@ -11,4 +11,5 @@ commonLabels:
 
 secretGenerator:
   - name: processor-secrets
-    env: processor-secrets.env
+    envs:
+      - processor-secrets.env
