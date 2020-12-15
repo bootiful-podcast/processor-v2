@@ -9,14 +9,26 @@ OD=${ROOT_DIR}/overlays/${BP_MODE_LOWERCASE}
 SECRETS=${APP_NAME}-secrets
 SECRETS_FN=${ROOT_DIR}/overlays/development/${APP_NAME}-secrets.env
 
+export IMAGE_TAG="${BP_MODE_LOWERCASE}${GITHUB_SHA:-}"
+export GCR_IMAGE_NAME=gcr.io/${PROJECT_ID}/${APP_NAME}
+export IMAGE_NAME=${GCR_IMAGE_NAME}:${IMAGE_TAG}
+
+echo "OD=$OD"
+echo "BP_MODE_LOWERCASE=$BP_MODE_LOWERCASE"
+echo "GCR_IMAGE_NAME=$GCR_IMAGE_NAME"
+echo "IMAGE_NAME=$IMAGE_NAME"
+echo "IMAGE_TAG=$IMAGE_TAG"
+
 cd $ROOT_DIR/..
 
+docker rmi $(docker images -a -q)
 pack build -B heroku/buildpacks:18 $APP_NAME
+mvn -f ${ROOT_DIR}/../pom.xml -DskipTests=true clean spring-javaformat:apply spring-boot:build-image
 image_id=$(docker images -q $APP_NAME)
-docker tag "${image_id}" gcr.io/${PROJECT_ID}/${APP_NAME}
-docker push gcr.io/${PROJECT_ID}/${APP_NAME}
-docker pull gcr.io/${PROJECT_ID}/${APP_NAME}:latest
-
+docker tag "${image_id}" $IMAGE_NAME
+docker push $IMAGE_NAME
+echo "pushing ${image_id} to $IMAGE_NAME "
+echo "tagging ${GCR_IMAGE_NAME}"
 
 cd $ROOT_DIR
 APP_YAML=${ROOT_DIR}/deploy/processor.yaml
@@ -35,31 +47,10 @@ AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
 AWS_REGION=$AWS_REGION
 EOF
 
-kubectl apply -k ${OD}
+cd $OD
+kustomize edit set image $GCR_IMAGE_NAME=$IMAGE_NAME
+kustomize build ${OD} | kubectl apply -f -
+
+#kubectl apply -k ${OD}
 
 rm $SECRETS_FN
-
-
-#kubectl delete secrets ${SECRETS} || echo "could not delete ${SECRETS}."
-#kubectl delete -f "$APP_YAML" || echo "could not delete the existing Kubernetes environment as described in ${APP_YAML}."
-#kubectl apply -f <(echo "
-#---
-#apiVersion: v1
-#kind: Secret
-#metadata:
-#  name: ${SECRETS}
-#type: Opaque
-#stringData:
-#  PODCAST_RMQ_ADDRESS: amqp://${RMQ_USER}:${RMQ_PW}@rabbitmq/
-#  BP_MODE: "${BP_MODE_LOWERCASE}"
-#  AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
-#  AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
-#  AWS_REGION: "${AWS_REGION}"
-#")
-#
-#kubectl apply -f $APP_YAML
-#kubectl get service | grep $APP_NAME || kubectl apply -f $APP_SERVICE_YAML
-
-#kubectl create deployment ${APP_NAME} --image=gcr.io/${PROJECT_ID}/${APP_NAME}
-#kubectl expose deployment ${APP_NAME} --port=80 --target-port=8080 --name=${APP_NAME} --type=LoadBalancer
-#kubectl describe services $APP_NAME
