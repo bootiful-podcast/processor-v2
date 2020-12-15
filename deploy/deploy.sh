@@ -23,7 +23,7 @@ cd $ROOT_DIR/..
 
 docker rmi $(docker images -a -q)
 pack build -B heroku/buildpacks:18 $APP_NAME
-mvn -f ${ROOT_DIR}/../pom.xml -DskipTests=true clean spring-javaformat:apply spring-boot:build-image
+
 image_id=$(docker images -q $APP_NAME)
 docker tag "${image_id}" $IMAGE_NAME
 docker push $IMAGE_NAME
