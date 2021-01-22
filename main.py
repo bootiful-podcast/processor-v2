@@ -122,6 +122,7 @@ def rmq_background_thread_runner():
 
     while True:
         try:
+            print(rmq_uri)
             rmq.start_rabbitmq_processor(
                 requests_q,
                 replies_q,
