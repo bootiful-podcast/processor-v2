@@ -2,19 +2,20 @@ name: Deploy
 
 env:
   
+  GH_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+  ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+  BP_MODE_LOWERCASE: production
+  BP_MODE : PRODUCTION
+  GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
   GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
   GIT_USERNAME: ${{ secrets.GIT_USERNAME }}
   CONFIGURATION_SERVER_USERNAME: ${{ secrets.CONFIGURATION_SERVER_USERNAME }}
   CONFIGURATION_SERVER_PASSWORD: ${{ secrets.CONFIGURATION_SERVER_PASSWORD }}
-  GCLOUD_ZONE_DEVELOPMENT: ${{ secrets.GCLOUD_ZONE_DEVELOPMENT }}
-  GCLOUD_ZONE_PRODUCTION: ${{ secrets.GCLOUD_ZONE_DEVELOPMENT }}
-  GCLOUD_PROJECT_DEVELOPMENT: ${{ secrets.GCLOUD_PROJECT_DEVELOPMENT }}
-  GCLOUD_PROJECT_PRODUCTION: ${{ secrets.GCLOUD_PROJECT_DEVELOPMENT }}
-  GCLOUD_SA_KEY: ${{ secrets.GCLOUD_SA_KEY }}
-  GH_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
-  ACTIONS_ALLOW_UNSECURE_COMMANDS: true
-  GKE_CLUSTER_NAME_PRODUCTION: ${{ secrets.GKE_CLUSTER_NAME_PRODUCTION }}
-  GKE_CLUSTER_NAME_DEVELOPMENT: ${{ secrets.GKE_CLUSTER_NAME_DEVELOPMENT }}
+  CONFIGURATION_SERVER_URI: https://configuration.bootifulpodcast.fm
+  GKE_CLUSTER : bootiful-podcast
+  GCLOUD_ZONE : us-central1-c
+  GCLOUD_PROJECT : bootiful
+
 
 on:
   repository_dispatch:
@@ -30,9 +31,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - uses: bootiful-podcast/bp-mode-github-action@v34
+#      - uses: bootiful-podcast/bp-mode-github-action@v34
 
       - name: "Setup PATH"
         run: |
@@ -40,17 +41,20 @@ jobs:
           mkdir -p $P
           echo "${P}" >> $GITHUB_PATH
       
-      - uses: google-github-actions/setup-gcloud@master
+      - uses: 'google-github-actions/auth@v0'
         with:
-          version: '290.0.1'
-          service_account_key: ${{ secrets.GCLOUD_SA_KEY }}
-          project_id: ${{ env.GCLOUD_PROJECT }}
-          export_default_credentials: true
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - id: 'get-credentials'
+        uses: 'google-github-actions/get-gke-credentials@v1'
+        with:
+          cluster_name: '${{ env.GKE_CLUSTER  }}'
+          location: '${{ env.GCLOUD_ZONE }}'
 
       - run: |
-          gcloud config set project $GCLOUD_PROJECT
+          gcloud config set project $GCLOUD_PROJECT 
           gcloud --quiet auth configure-docker
-          gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone "$GCLOUD_ZONE" --project $GCLOUD_PROJECT
+          kubectl get pods
 
       - name: Discover Spring Cloud Config Server
         run: |
