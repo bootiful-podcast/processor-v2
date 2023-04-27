@@ -15,7 +15,7 @@ from flask import Flask
 def rmq_background_thread_runner():
     address_key = "PODCAST_RMQ_ADDRESS"
     assert address_key in os.environ, (
-        'you must set the "%s" environment variable!' % address_key
+            'you must set the "%s" environment variable!' % address_key
     )
 
     def resolve_config_file_name() -> str:
@@ -69,13 +69,17 @@ def rmq_background_thread_runner():
             if not os.path.exists(the_directory):
                 os.makedirs(the_directory)
             assert os.path.exists(the_directory), (
-                "the directory, %s, should exist but does not" % the_directory
+                    "the directory, %s, should exist but does not" % the_directory
             )
             log("going to download %s to %s" % (s3p, local_fn))
-            s3_client.download(bucket, os.path.join(folder, fn), local_fn)
-            assert os.path.exists(local_fn), (
-                "the file should be downloaded to %s, but was not." % local_fn
-            )
+            try:
+                s3_client.download(bucket, os.path.join(folder, fn), local_fn)
+                assert os.path.exists(local_fn), (
+                        "the file should be downloaded to %s, but was not." % local_fn
+                )
+            except BaseException as e:
+                print('something has gone horribly awry when trying to download the S3 file')
+
             return local_fn
 
         for s3_path in [
@@ -151,6 +155,7 @@ if __name__ == "__main__":
         log("about to start the Flask service")
         app.run(port=8080)
 
+
     def run_rmq():
 
         retry_count = 0
@@ -167,6 +172,7 @@ if __name__ == "__main__":
                 )
 
         log("Exhausted retry count of %s times." % max_retries)
+
 
     for f in [run_flask, run_rmq]:
         threading.Thread(target=f).start()
