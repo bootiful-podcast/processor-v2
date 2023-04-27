@@ -45,6 +45,9 @@ AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
 AWS_REGION=$AWS_REGION
 EOF
 
+echo "SECRETS==========="
+echo $SECRETS_FN
+
 cd $OD
 kustomize edit set image $GCR_IMAGE_NAME=$IMAGE_NAME
 kustomize build ${OD} | kubectl apply -f -
