@@ -34,7 +34,7 @@ cd $ROOT_DIR
 APP_YAML=${ROOT_DIR}/deploy/processor.yaml
 APP_SERVICE_YAML=${ROOT_DIR}/deploy/processor-service.yaml
 rm -rf $SECRETS_FN
-touch $SECRETS_FN
+mkdir -p $SECRETS_FN && touch $SECRETS_FN
 echo writing to "$SECRETS_FN "
 cat <<EOF >${SECRETS_FN}
 PODCAST_RMQ_ADDRESS=amqp://${BP_RABBITMQ_MANAGEMENT_USERNAME}:${BP_RABBITMQ_MANAGEMENT_PASSWORD}@${BP_RABBITMQ_MANAGEMENT_HOST}/${BP_RABBITMQ_MANAGEMENT_VHOST}
@@ -46,9 +46,7 @@ EOF
 
 echo "SECRETS==========="
 echo $SECRETS_FN
-
-cd $OD
-kustomize edit set image $GCR_IMAGE_NAME=$IMAGE_NAME
-kustomize build ${OD} | kubectl apply -f -
-
-rm $SECRETS_FN
+kubectl delete secrets $SECRETS || echo "no secrets to delete."
+kubectl create secret generic $SECRETS --from-env-file $SECRETS_FN
+kubectl delete -f $ROOT_DIR/deploy/k8s/deployment.yaml || echo "couldn't delete the deployment as there was nothing deployed."
+kubectl apply -f $ROOT_DIR/deploy/k8s
