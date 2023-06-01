@@ -18,7 +18,7 @@ spec:
         - envFrom:
             - secretRef:
                 name: processor-secrets
-          image: gcr.io/bootiful/processor
+          image: gcr.io/pgtm-jlong/processor
           imagePullPolicy: Always
           resources:
             limits:

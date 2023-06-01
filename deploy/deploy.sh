@@ -22,7 +22,6 @@ echo "IMAGE_TAG=$IMAGE_TAG"
 cd $ROOT_DIR/..
 
 docker rmi $(docker images -a -q)
-# pack build -B heroku/buildpacks:18 $APP_NAME
 pack build -B heroku/builder:22 $APP_NAME
 
 image_id=$(docker images -q $APP_NAME)
