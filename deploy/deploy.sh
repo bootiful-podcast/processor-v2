@@ -33,7 +33,6 @@ echo "tagging ${GCR_IMAGE_NAME}"
 cd $ROOT_DIR
 APP_YAML=${ROOT_DIR}/deploy/processor.yaml
 APP_SERVICE_YAML=${ROOT_DIR}/deploy/processor-service.yaml
-#SECRETS_FN=${OD}/${APP_NAME}-secrets.env
 rm -rf $SECRETS_FN
 touch $SECRETS_FN
 echo writing to "$SECRETS_FN "
@@ -51,7 +50,5 @@ echo $SECRETS_FN
 cd $OD
 kustomize edit set image $GCR_IMAGE_NAME=$IMAGE_NAME
 kustomize build ${OD} | kubectl apply -f -
-
-#kubectl apply -k ${OD}
 
 rm $SECRETS_FN
