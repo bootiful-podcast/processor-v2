@@ -7,7 +7,7 @@ ROOT_DIR=$(cd $(dirname $0) && pwd)
 BP_MODE_LOWERCASE=${BP_MODE_LOWERCASE:-development}
 OD=${ROOT_DIR}/overlays/${BP_MODE_LOWERCASE}
 SECRETS=${APP_NAME}-secrets
-SECRETS_FN=${ROOT_DIR}/overlays/development/${APP_NAME}-secrets.env
+SECRETS_FN=${ROOT_DIR}/${APP_NAME}-secrets
 
 export IMAGE_TAG="${BP_MODE_LOWERCASE}${GITHUB_SHA:-}"
 export GCR_IMAGE_NAME=gcr.io/${PROJECT_ID}/${APP_NAME}
@@ -34,7 +34,7 @@ cd $ROOT_DIR
 APP_YAML=${ROOT_DIR}/deploy/processor.yaml
 APP_SERVICE_YAML=${ROOT_DIR}/deploy/processor-service.yaml
 rm -rf $SECRETS_FN
-mkdir -p $SECRETS_FN && touch $SECRETS_FN
+touch $SECRETS_FN
 echo writing to "$SECRETS_FN "
 cat <<EOF >${SECRETS_FN}
 PODCAST_RMQ_ADDRESS=amqp://${BP_RABBITMQ_MANAGEMENT_USERNAME}:${BP_RABBITMQ_MANAGEMENT_PASSWORD}@${BP_RABBITMQ_MANAGEMENT_HOST}/${BP_RABBITMQ_MANAGEMENT_VHOST}
