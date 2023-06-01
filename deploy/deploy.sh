@@ -3,7 +3,7 @@ set -e
 set -o pipefail
 APP_NAME=processor
 PROJECT_ID=$GCLOUD_PROJECT
-ROOT_DIR=$(cd $(dirname $0) && pwd)
+ROOT_DIR=$GITHHB_WORKSPACE
 BP_MODE_LOWERCASE=${BP_MODE_LOWERCASE:-development}
 OD=${ROOT_DIR}/overlays/${BP_MODE_LOWERCASE}
 SECRETS=${APP_NAME}-secrets
