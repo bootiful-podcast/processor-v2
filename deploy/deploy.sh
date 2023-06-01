@@ -23,7 +23,7 @@ cd $ROOT_DIR/..
 
 docker rmi $(docker images -a -q)
 # pack build -B heroku/builder:22 $APP_NAME
-pack build -B heroku/builder-classic:22 $APP_NAME
+pack build -B heroku/buildpacks:20 $APP_NAME
 
 image_id=$(docker images -q $APP_NAME)
 docker tag "${image_id}" $IMAGE_NAME
