@@ -16,13 +16,7 @@ echo "IMAGE_NAME=$IMAGE_NAME"
 echo "IMAGE_TAG=$IMAGE_TAG"
 
 cd $GITHUB_WORKSPACE
-# docker rmi $(docker images -a -q)
-# pack build -B heroku/builder:22 $APP_NAME
-# pack build -B heroku/buildpacks:20 $APP_NAME
-
-docker build -t $IMAGE_NAME . # Will be named dude/man:v2
-
-# docker build . 
+docker build -t $IMAGE_NAME .  
 
 image_id=$(docker images -q $APP_NAME)
 docker tag "${image_id}" $IMAGE_NAME
