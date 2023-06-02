@@ -2,7 +2,7 @@ name: Deploy
 
 env:
   
-  ALLOW_UNTRUSTED_ACTIONS: true
+  ACTIONS_ALLOW_UNSECURE_COMMANDS: true
   APP_NAME: configuration
   GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
   GIT_USERNAME: ${{ secrets.GIT_USERNAME }}
@@ -29,7 +29,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
 
       - uses: actions/checkout@v3
