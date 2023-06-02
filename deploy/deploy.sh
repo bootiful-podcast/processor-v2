@@ -14,10 +14,13 @@ echo "BP_MODE_LOWERCASE=$BP_MODE_LOWERCASE"
 echo "GCR_IMAGE_NAME=$GCR_IMAGE_NAME"
 echo "IMAGE_NAME=$IMAGE_NAME"
 echo "IMAGE_TAG=$IMAGE_TAG"
+echo "APP_NAME=$APP_NAME"
+
+docker images -q $GCR_IMAGE_NAME | while read  l ; do docker rmi $l -f ; done
 
 docker build -t $IMAGE_NAME .  
 
-IMAGE_ID=$(docker images -q $APP_NAME)
+IMAGE_ID=$(docker images -q $GCR_IMAGE_NAME)
 
 echo "tagging ${IMAGE_ID} as ${IMAGE_NAME}"
 docker tag "${IMAGE_ID}" $IMAGE_NAME
