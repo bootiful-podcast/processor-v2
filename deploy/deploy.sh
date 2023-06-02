@@ -24,6 +24,7 @@ IMAGE_ID=$(docker images -q $GCR_IMAGE_NAME)
 
 echo "tagging ${IMAGE_ID} as ${IMAGE_NAME}"
 docker tag "${IMAGE_ID}" $IMAGE_NAME
+docker tag "${IMAGE_ID}" $GCR_IMAGE_NAME:latest
 
 echo "pushing ${IMAGE_ID}  "
 docker push $IMAGE_NAME
