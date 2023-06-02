@@ -2,14 +2,10 @@
 set -e
 set -o pipefail
 APP_NAME=processor
-PROJECT_ID=$GCLOUD_PROJECT
-ROOT_DIR=$GITHHB_WORKSPACE
-BP_MODE_LOWERCASE=${BP_MODE_LOWERCASE:-development}
-OD=${ROOT_DIR}/overlays/${BP_MODE_LOWERCASE}
 SECRETS=${APP_NAME}-secrets
 SECRETS_FN=${ROOT_DIR}/${APP_NAME}-secrets
 
-export IMAGE_TAG="${BP_MODE_LOWERCASE}${GITHUB_SHA:-}"
+export IMAGE_TAG="${GITHUB_SHA:-}"
 export GCR_IMAGE_NAME=gcr.io/${GCLOUD_PROJECT}/${APP_NAME}
 export IMAGE_NAME=${GCR_IMAGE_NAME}:${IMAGE_TAG}
 
@@ -19,9 +15,8 @@ echo "GCR_IMAGE_NAME=$GCR_IMAGE_NAME"
 echo "IMAGE_NAME=$IMAGE_NAME"
 echo "IMAGE_TAG=$IMAGE_TAG"
 
-cd $ROOT_DIR/..
-
-docker rmi $(docker images -a -q)
+cd $GITHUB_WORKSPACE
+# docker rmi $(docker images -a -q)
 # pack build -B heroku/builder:22 $APP_NAME
 # pack build -B heroku/buildpacks:20 $APP_NAME
 
