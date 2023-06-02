@@ -3,9 +3,9 @@ set -e
 set -o pipefail
 APP_NAME=processor
 SECRETS=${APP_NAME}-secrets
-SECRETS_FN=${ROOT_DIR}/${APP_NAME}-secrets
+SECRETS_FN=${APP_NAME}-secrets
 
-export IMAGE_TAG="${GITHUB_SHA:-}"
+export IMAGE_TAG="${GITHUB_SHA:-${RANDOM}}"
 export GCR_IMAGE_NAME=gcr.io/${GCLOUD_PROJECT}/${APP_NAME}
 export IMAGE_NAME=${GCR_IMAGE_NAME}:${IMAGE_TAG}
 
@@ -15,14 +15,15 @@ echo "GCR_IMAGE_NAME=$GCR_IMAGE_NAME"
 echo "IMAGE_NAME=$IMAGE_NAME"
 echo "IMAGE_TAG=$IMAGE_TAG"
 
-cd $GITHUB_WORKSPACE
 docker build -t $IMAGE_NAME .  
 
-image_id=$(docker images -q $APP_NAME)
-docker tag "${image_id}" $IMAGE_NAME
-echo "tagging ${image_id} as ${IMAGE_NAME}"
-echo "pushing ${image_id}  "
-docker push $image_id
+IMAGE_ID=$(docker images -q $APP_NAME)
+
+echo "tagging ${IMAGE_ID} as ${IMAGE_NAME}"
+docker tag "${IMAGE_ID}" $IMAGE_NAME
+
+echo "pushing ${IMAGE_ID}  "
+docker push $IMAGE_NAME
 
 
 cd $ROOT_DIR
