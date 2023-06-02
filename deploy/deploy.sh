@@ -20,9 +20,10 @@ docker build -t $IMAGE_NAME .
 
 image_id=$(docker images -q $APP_NAME)
 docker tag "${image_id}" $IMAGE_NAME
-docker push $IMAGE_NAME
-echo "pushing ${image_id} to $IMAGE_NAME "
-echo "tagging ${GCR_IMAGE_NAME}"
+echo "tagging ${image_id} as ${IMAGE_NAME}"
+echo "pushing ${image_id}  "
+docker push $image_id
+
 
 cd $ROOT_DIR
 APP_YAML=${ROOT_DIR}/deploy/processor.yaml
