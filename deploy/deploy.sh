@@ -4,31 +4,21 @@ set -o pipefail
 APP_NAME=processor
 SECRETS=${APP_NAME}-secrets
 SECRETS_FN=${APP_NAME}-secrets
+IMAGE_NAME=gcr.io/${GCLOUD_PROJECT}/${APP_NAME}
 
-export IMAGE_TAG="${GITHUB_SHA:-${RANDOM}}"
-export GCR_IMAGE_NAME=gcr.io/${GCLOUD_PROJECT}/${APP_NAME}
-export IMAGE_NAME=${GCR_IMAGE_NAME}:${IMAGE_TAG}
 
 echo "OD=$OD"
 echo "BP_MODE_LOWERCASE=$BP_MODE_LOWERCASE"
-echo "GCR_IMAGE_NAME=$GCR_IMAGE_NAME"
 echo "IMAGE_NAME=$IMAGE_NAME"
 echo "IMAGE_TAG=$IMAGE_TAG"
 echo "APP_NAME=$APP_NAME"
 
-docker images -q $GCR_IMAGE_NAME | while read  l ; do docker rmi $l -f ; done
+docker images -q $IMAGE_NAME | while read  l ; do docker rmi $l -f ; done
 
 docker build -t $IMAGE_NAME .  
 
-IMAGE_ID=$(docker images -q $GCR_IMAGE_NAME)
-
-echo "tagging ${IMAGE_ID} as ${IMAGE_NAME}"
-docker tag "${IMAGE_ID}" $IMAGE_NAME
-docker tag "${IMAGE_ID}" $GCR_IMAGE_NAME:latest
-
 echo "pushing ${IMAGE_ID}  "
 docker push $IMAGE_NAME
-
 
 cd $ROOT_DIR
 APP_YAML=${ROOT_DIR}/deploy/processor.yaml
