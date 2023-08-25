@@ -21,10 +21,11 @@ spec:
           image: gcr.io/pgtm-jlong/processor:latest
           imagePullPolicy: Always
           resources:
-            ephemeral-storage: "10Gi"
             limits:
               memory: "10Gi"
+              ephemeral-storage: "2Gi"
             requests:
+              ephemeral-storage: "2Gi"
               memory: "10Gi"
           name: processor
           env:
