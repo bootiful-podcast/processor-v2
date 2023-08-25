@@ -18,7 +18,6 @@ You could also use this script to have Kubernetes [port-forward the remote, in-c
 
 ```shell
 
-
 docker run \
  -e PODCAST_RMQ_ADDRESS=amqp://bp-rmq:bp-rmq@host.docker.internal/ \
  -e AWS_REGION=us-east-1 \
