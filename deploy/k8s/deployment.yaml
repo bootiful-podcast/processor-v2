@@ -20,7 +20,10 @@ spec:
                 name: processor-secrets
           image: gcr.io/pgtm-jlong/processor:latest
           imagePullPolicy: Always
+          requests: 
+            ephemeral-storage: "10Gi"
           resources:
+            ephemeral-storage: "10Gi"
             limits:
               memory: "10Gi"
             requests:
