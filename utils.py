@@ -44,6 +44,7 @@ def parse_uri(uri) -> typing.Dict[str, object]:
         "port": port,
         "host": host,
     }
+    print(res)
     return res
 
 
